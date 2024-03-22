@@ -1,0 +1,189 @@
+body {
+    background-color: #E2E9D2;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+}
+
+.header-left h1, a {
+    margin: 0;
+    text-decoration: none; /* Remove underlining */
+    color: black;
+}
+
+.header-right a{
+    margin: 0 15px; /* відступи по 20px зліва і зправа */
+    margin-right: 10px; /* Відступ справа між посиланнями */
+    margin-left: 10px; /* Відступ зліва між посиланнями */
+}
+
+.black-line {
+    width: 97%;
+    height: 2px;
+    background-color: black;
+    margin: 0 15px; /* відступи по 20px зліва і зправа */
+}
+
+main {
+    padding: 20px;
+}
+
+.main-image {
+    width: 100%;
+    margin-bottom: 0px;
+}
+
+.about-us {
+    display: flex;
+    align-items: center;
+    margin-top: 0px;
+}
+
+.about-us h2 {
+    width: 20%;
+    font-size: 40px;
+    margin-left: 15px;
+    color: #89AC29;
+}
+
+.about-us p {
+    font-size: 18px;
+    margin-right: 15px;
+}
+
+.text-block {
+    background-color: #C7D79D;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.links {
+    text-align: center;
+    width: 100%;
+}
+
+.links a {
+    display: inline-block;
+    margin-right: 40px;
+    font-family: "Lucida Console", Courier, monospace;
+}
+
+.links a img {
+    width: 220px; /* задати ширину зображення */
+    height: 200px; /* задати висоту зображення */
+}
+
+footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+}
+
+.footer-left img {
+    display: flex;
+    align-items: center;
+    width: 200px; /* Adjust size as needed */
+}
+
+.footer-center h2 {
+    margin: 0;
+}
+
+.footer-right p {
+    margin: 0 10px;
+    font-size: 20px;
+}
+
+
+.container-sign {
+    background-color:  #E2E9D2;
+    border-radius: 15px; /* Закруглені вугли */
+    padding: 20px;
+    width: 25%; /* Ширина контейнера */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Тінь контейнера */
+    margin: 0 auto; /* Центрування контейнера по горизонталі */
+    margin-bottom: 15px;
+    margin-top: 15px;
+
+    position: relative; /* Позиціонуємо відносно батьківського елемента */
+    z-index: 2; /* Над розмитим зображенням */
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.background-image {
+    background: url("../friendss.png");
+    background-size: cover;
+    width: 100%;
+    height: 85vh;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.background-image::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+.b {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('static/friendss.png');
+    background-size: cover;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    filter: blur(5px); /* Розмиття */
+    opacity: 0.5; /* Затемнення */
+    z-index: -1; /* За фоном */
+}
+
+.registration-form {
+    display: inline-block; /* Центруємо блок форми */
+}
+
+
+.input-field {
+    width: 300px; /* Ширина поля */
+    border-radius: 10px; /* Закруглені вугли поля */
+    padding: 10px; /* Відступ від країв поля */
+    margin-bottom: 15px;
+}
+
+
+.btn, .submit {
+    width: 165px;
+    height: 40px;
+    background-color: #96A86F;
+    border: none;
+    border-radius: 30px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 200;
+    align-self: center;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
