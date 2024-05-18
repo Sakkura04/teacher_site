@@ -17,7 +17,12 @@
         <div class="header-right">
             <a href="#">Join us!  </a>
             <a href="/articles">Articles  </a>
-            <a href="/sign_up">Sign up  </a>
+            {% if is_authenticated %}
+                <a href="/sign_out">Sign out </a>
+                <a href="/my cabinet">Sign out </a>
+            {% else %}
+                <a href="/sign_up">Sign up  </a>
+            {% endif %}
         </div>
     </header>
     <div class="black-line"></div>

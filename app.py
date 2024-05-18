@@ -1,8 +1,9 @@
-from flask import Flask, render_template, url_for, request, redirect
+from flask import Flask, render_template, url_for, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from models import db_funcs
 from keyy import secret_key
+from flask_session import Session
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
@@ -53,73 +54,26 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        if db_funcs.get_from_table(email, password):
+        if db_funcs.get_from_table(email, password, session):
             return redirect(url_for('index'))
     return render_template('log_in.html')
 
 
+@app.route('/sign_out', methods=['GET', 'POST'])
+def sign_out():
+    if request.method == 'POST':
+        session.pop('logged', None)  # Видаляємо ідентифікатор користувача з сесії
+        return redirect(url_for('index'))
+    return render_template('sign_out.html')
 
 
-# recieve data - post, just go to page - get
-@app.route('/create-article', methods=['POST', 'GET'])
-def create_article():
-    if request.method == 'POST': # indicates that a form was submitted to the server
-        title = request.form['title']
-        intro = request.form['intro']
-        text = request.form['text']
-
-        article = Article (title=title, intro=intro, text=text)
-
-        try:
-            db.session.add(article)
-            db.session.commit()
-            return redirect('/posts')
-        except:
-            return "Lazsha"
-
+@app.context_processor
+def inject_is_authenticated():
+    if 'logged' in session:
+        is_authenticated = True
     else:
-        return render_template('create-article.html')
-
-
-@app.route('/posts')
-def posts():
-    articles = Article.query.order_by(Article.date.desc()).all() #query- enquiry to db
-    return render_template('posts.html', articles=articles)
-
-
-@app.route('/posts/<int:id>')
-def post_more(id):
-    article = Article.query.get(id)
-    return render_template('post_detail.html', articles=article)
-
-
-@app.route('/posts/<int:id>/delete')
-def post_delete(id):
-    article = Article.query.get_or_404(id) #in case there no such an article, mistake will be recieved
-    try:
-        db.session.delete(article)
-        db.session.commit()
-        return redirect('/posts')
-    except:
-        return "Mistake:("
-
-
-@app.route('/posts/<int:id>/update', methods=['POST', 'GET'])
-def post_update(id):
-    article = Article.query.get_or_404(id)
-    if request.method == 'POST':  # indicates that a form was submitted to the server
-        article.title = request.form['title'].strip()  # Remove leading/trailing whitespace
-        article.intro = request.form['intro'].strip()
-        article.text = request.form['text'].strip()
-
-        try:
-            db.session.commit()
-            return redirect('/posts')
-        except:
-            return "Error updating post"
-    else:
-        article = Article.query.get_or_404(id)
-        return render_template('post_update.html', article=article)
+        is_authenticated = False
+    return dict(is_authenticated=is_authenticated)
 
 
 

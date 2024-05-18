@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block style_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/registration.css') }}">
+{%endblock%}
+
+{% block main %}
+<div class="background-image">
+    <div class="background-overlay"></div> <!-- Додали оверлей для затемнення -->
+    <div class="container-sign">
+       <h2>Sign Out</h2>
+       <div class="registration-form">
+          <p>Are you sure you want to sign out?</p>
+          <a href="/">
+             <button type="submit" class="btn" >Main page</button>
+          </a>
+          <form method="post" action="/sign_out">
+            <button type="submit" class="btn" >Sign Out</button>
+          </form>
+      </div>
+    </div>
+</div>
+{%endblock%}
+

@@ -122,6 +122,10 @@ footer {
     text-align: center;
 }
 
+.container-sign h2{
+    margin-bottom 5px;
+}
+
 .background-image {
     background: url("../friendss.png");
     background-size: cover;
