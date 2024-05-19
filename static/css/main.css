@@ -21,6 +21,7 @@ header {
     margin: 0 15px; /* відступи по 20px зліва і зправа */
     margin-right: 10px; /* Відступ справа між посиланнями */
     margin-left: 10px; /* Відступ зліва між посиланнями */
+    font-size: 25px;
 }
 
 .black-line {
@@ -32,10 +33,16 @@ header {
 
 main {
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto 20px;
 }
 
+
+
 .main-image {
-    width: 100%;
+    width: 105%;
     margin-bottom: 0px;
 }
 
@@ -53,19 +60,35 @@ main {
 }
 
 .about-us p {
-    font-size: 18px;
+    font-size: 25px;
     margin-right: 15px;
 }
 
-.text-block {
-    background-color: #C7D79D;
-    padding: 20px;
-    margin-bottom: 25px;
+.text-block1, .text-block2 {
+    padding: 20px 30px ;
+    font-size: 20px;
+    width: 800px;
+    margin: 30px auto; /* Центрування контейнера */
 }
+
+.text-block2 {
+    width: 900px;
+    background-color: #C7D79D;
+    border-radius: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Додає тінь */
+    transition: background-color 0.2s ease; /* Додає анімацію зміни кольору */
+}
+
+
+.text-block2:hover {
+    background-color: #FFF5E1; /* Молочний колір при наведенні */
+}
+
 
 .links {
     text-align: center;
     width: 100%;
+    margin-top: 40px;
 }
 
 .links a {
@@ -75,9 +98,11 @@ main {
 }
 
 .links a img {
+    margin-top 50px;
     width: 220px; /* задати ширину зображення */
     height: 200px; /* задати висоту зображення */
 }
+
 
 footer {
     display: flex;
