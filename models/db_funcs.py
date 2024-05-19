@@ -2,7 +2,7 @@ import mysql.connector
 from flask import session
 
 
-def create_table():
+def create_user_table():
     connection = mysql.connector.connect(
         host="localhost",
         user="root",

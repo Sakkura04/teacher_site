@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block style_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/registration.css') }}">
+{% endblock %}
+
+{% block main %}
+<div class="background-image">
+    <div class="background-overlay"></div>
+    <div class="container-sign">
+        <h2>Enter Secret Code</h2>
+        <div class="registration-form">
+            <form class="teacher_code" id="teacher_code" action="/teacher_code" accept-charset="UTF-8" method="post">
+                <input type="text" name="secret_code" id="secret_code" placeholder="Secret Code" class="input-field">
+                <input type="submit" value="Submit" class="btn">
+            </form>
+            {% if error %}
+            <form action="/sign_up" method="get">
+                <input type="submit" value="Back" class="btn">
+            </form>
+            <p>{{ error }}</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

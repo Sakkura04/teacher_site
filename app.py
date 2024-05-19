@@ -1,9 +1,11 @@
 from flask import Flask, render_template, url_for, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from models import db_funcs
+from models import db_teacher, db_funcs
 from keyy import secret_key
 from flask_session import Session
+# Секретний код для реєстрації вчителя
+from teacher_secret_code import TEACHER_SECRET_CODE
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
@@ -33,7 +35,9 @@ def registration():
         db_funcs.create_table()
 
     if request.method == 'POST':
-        # Отримуємо дані форми
+        if 'teacher' in request.form:
+            return redirect(url_for('teacher_code'))
+
         name = request.form['name']
         surname = request.form['surname']
         midname = request.form['midname']
@@ -47,6 +51,40 @@ def registration():
         # Перенаправляємо користувача на іншу сторінку
         return redirect(url_for('index'))
     return render_template('sign_up.html')
+
+
+@app.route('/teacher_code', methods=['GET', 'POST'])
+def teacher_code():
+    if request.method == 'POST':
+        secret_code = request.form['secret_code']
+        if secret_code == TEACHER_SECRET_CODE:
+            return redirect(url_for('register_teacher'))
+        else:
+            error = "Incorrect secret code. Please try again."
+            return render_template('teacher_code.html', error=error)
+
+    return render_template('teacher_code.html')
+
+
+@app.route('/register_teacher', methods=['GET', 'POST'])
+def register_teacher():
+    if request.method == 'POST':
+        name = request.form['name']
+        surname = request.form['surname']
+        midname = request.form['midname']
+        email = request.form['email']
+        phone = request.form['phone']
+        password = request.form['password']
+        education = request.form['education']
+        group_count = request.form['group_count']
+        indiv_count = request.form['indiv_count']
+        level = request.form['level']
+        start_work = request.form['start_work']
+        db_teacher.insert_user_and_teacher(name, surname, midname, email, phone, password, education, group_count, indiv_count,
+                                level, start_work)
+        return redirect(url_for('login'))
+
+    return render_template('register_teacher.html')
 
 
 @app.route('/log_in', methods=['GET', 'POST'])
