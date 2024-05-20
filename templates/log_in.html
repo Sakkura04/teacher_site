@@ -8,13 +8,13 @@
 <div class="background-image">
     <div class="background-overlay"></div> <!-- Додали оверлей для затемнення -->
     <div class="container-sign">
-       <h2>Registration</h2>
+       <h2>Log In</h2>
        <div class="registration-form">
         <form class="new_user" id="new_user" action="/log_in" accept-charset="UTF-8" method="post">
-          <input type="email" name="email" id="user_email" placeholder="Email" class="input-field" value="">
-          <input type="password" name="password" id="user_password" placeholder="Пароль" class="input-field">
+          <input required type="email" name="email" id="user_email" placeholder="Email" class="input-field" value="">
+          <input required type="password" name="password" id="user_password" placeholder="Пароль" class="input-field">
           <a href="/">
-              <input type="submit" name="commit" value="Log_in" class="btn" data-disable-with="Log in">
+              <input type="submit" name="commit" value="Log in" class="btn" data-disable-with="Log in">
           </a>
         </form>
       </div>

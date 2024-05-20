@@ -130,11 +130,12 @@ footer {
     background: url("../friendss.png");
     background-size: cover;
     width: 100%;
-    height: 85vh;
+    min-height: 80vh;
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
 }
 
 .background-image::after {

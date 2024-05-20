@@ -1,14 +1,16 @@
 import mysql.connector
 from flask import session
 
-
-def create_user_table():
-    connection = mysql.connector.connect(
+def get_db_connection():
+    return mysql.connector.connect(
         host="localhost",
         user="root",
         password="Vladasql2004",
         database="teachSiteDb"
     )
+
+def create_user_table():
+    connection = get_db_connection()
     try:
         cursor = connection.cursor()
 
@@ -45,12 +47,8 @@ def create_user_table():
 
 def table_exists(table_name):
     # Підключення до бази даних
-    connection = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="Vladasql2004",
-        database="teachSiteDb"
-     )
+    connection = get_db_connection()
+
     try:
         cursor = connection.cursor()
 
@@ -72,25 +70,21 @@ def table_exists(table_name):
         return False
 
 
-# ///////////////////
-#to put users data in a users table
 def insert_table(name, surname, midname, email, phone, password):
-    connection = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="Vladasql2004",
-        database="teachSiteDb"
-    )
-
+    connection = get_db_connection()
+    user_id = None
     try:
         cursor = connection.cursor()
         cursor.execute(
             "INSERT INTO users (name, surname, midname, email, phone, password) VALUES (%s, %s, %s, %s, %s, %s)",
             (name, surname, midname, email, phone, password))
         connection.commit()
+
+        # Отримання user_id вставленого запису
+        user_id = cursor.lastrowid
+        return user_id
     except mysql.connector.Error as error:
         print("Error inserting in the table:", error)
-
     finally:
         if connection.is_connected():
             cursor.close()
@@ -100,29 +94,42 @@ def insert_table(name, surname, midname, email, phone, password):
 
 # ///////////////////
 #to get data from users table
-def get_from_table(email, password):
-    connection = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="Vladasql2004",
-        database="teachSiteDb"
-    )
+def is_in_table(email, password):
+    connection = get_db_connection()
     try:
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM users WHERE email = %s AND password = %s", (email, password))
         user = cursor.fetchone()
+
+        if user:
+            user_id = user[0]  # Припускаємо, що user_id є першим полем в таблиці `users`
+            print(user_id)
+
+            # Перевіряємо, чи є запис в таблиці `teacher` для цього користувача
+            cursor.execute("SELECT id FROM teacher WHERE user_id = %s", (user_id,))
+            teacher = cursor.fetchone()
+            print(teacher)
+
+            # Якщо є запис у таблиці `teacher`, встановлюємо роль як 'teacher'
+            if teacher:
+                role = 'teacher'
+            else:
+                role = 'student'
+
+            # Закриваємо курсор і з'єднання
+            cursor.close()
+            connection.close()
+
+            return {'logged_in': True, 'user_id': user_id, 'role': role}
+
+        # Якщо користувача не знайдено, повертаємо відповідний результат
         cursor.close()
         connection.close()
-
-        # Якщо користувач знайдений, авторизуємо його
-        if user:
-            session['logged_in'] = True
-            return True
-
-        return False
+        return {'logged_in': False}
 
     except mysql.connector.Error as error:
-        print("Error inserting in the table:", error)
+        print("Error querying the database:", error)
+        return {'logged_in': False}
 
     finally:
         if connection.is_connected():
@@ -131,4 +138,30 @@ def get_from_table(email, password):
             print("MySQL connection is closed.")
 
 
+def db_check():
+    # Підключення до бази даних
+    connection = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="root"
+    )
+    try:
+        cursor = connection.cursor()
 
+        # Перевіряємо, чи існує база даних teachSiteDb
+        cursor.execute("SHOW DATABASES LIKE 'teachSiteDb'")
+        result = cursor.fetchone()
+
+        if not result:
+            # Якщо база даних teachSiteDb ще не існує, створюємо її
+            cursor.execute("CREATE DATABASE IF NOT EXISTS teachSiteDb DEFAULT CHARACTER SET 'utf8'")
+            print("Database 'teachSiteDb' created successfully.")
+
+    except mysql.connector.Error as error:
+        print("Error creating database:", error)
+
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            print("MySQL connection is closed.")
