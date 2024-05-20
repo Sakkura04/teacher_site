@@ -170,6 +170,30 @@ def show_teachers():
     return render_template('teachers.html', teachers=teachers)
 
 
+@app.route('/update_teacher_info', methods=['POST'])
+def update_teacher_info():
+    user_id = session.get('user_id')  # Assuming you store the user's ID in the session
+    if not user_id:
+        return redirect(url_for('login'))  # Redirect to login if user not logged in
+
+    name = request.form['name']
+    surname = request.form['surname']
+    midname = request.form['midname']
+    email = request.form['email']
+    phone = request.form['phone']
+
+    photo = request.files['photo']
+    photo_filename = None
+    if photo:
+        print("photo")
+        print(photo)
+        photo_filename = secure_filename(photo.filename)
+        photo.save(os.path.join('static/uploads', photo_filename))
+
+    db_teacher.update_teacher_info(name, surname, midname, email, phone, user_id, photo_filename)
+    return redirect(url_for('teacher_profile'))
+
+
 
 @app.context_processor
 def inject_is_authenticated():

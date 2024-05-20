@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 
 {% block style_css %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/profiles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/teachers.css') }}">
 {% endblock %}
 
 {% block main %}
-
+<h2 class="centered-title">Наші Вчителі</h2>
+<div class="row">
 <div class="container">
-    <h2>Наші Вчителі</h2>
     {% for teacher in teachers %}
     <div class="column">
         <div class="left-column">
@@ -26,5 +26,6 @@
         </div>
     </div>
     {% endfor %}
+</div>
 </div>
 {% endblock %}

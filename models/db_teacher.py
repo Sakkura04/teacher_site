@@ -125,3 +125,33 @@ def get_all_teachers():
             print("MySQL connection is closed.")
     return teachers
 
+
+
+def update_teacher_info(name, surname, midname, email, phone, user_id, photo_filename):
+    # Update the database
+    connection = db_funcs.get_db_connection()
+    try:
+        cursor = connection.cursor()
+        if photo_filename:
+            query = """
+                    UPDATE users
+                    SET name = %s, surname = %s, midname = %s, email = %s, phone = %s, photo = %s
+                    WHERE id = %s
+                """
+            cursor.execute(query, (name, surname, midname, email, phone, photo_filename, user_id))
+        else:
+            query = """
+                    UPDATE users
+                    SET name = %s, surname = %s, midname = %s, email = %s, phone = %s
+                    WHERE id = %s
+                """
+            cursor.execute(query, (name, surname, midname, email, phone, user_id))
+        connection.commit()
+    except mysql.connector.Error as error:
+        print("Error updating user information:", error)
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            print("MySQL connection is closed.")
+
