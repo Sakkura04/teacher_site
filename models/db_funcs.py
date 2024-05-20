@@ -70,30 +70,11 @@ def table_exists(table_name):
         return False
 
 
-# ///////////////////
-#to put users data in a users table
-# def insert_table(name, surname, midname, email, phone, password):
-#     connection = get_db_connection()
-#
-#     try:
-#         cursor = connection.cursor()
-#         cursor.execute(
-#             "INSERT INTO users (name, surname, midname, email, phone, password) VALUES (%s, %s, %s, %s, %s, %s)",
-#             (name, surname, midname, email, phone, password))
-#         connection.commit()
-#     except mysql.connector.Error as error:
-#         print("Error inserting in the table:", error)
-#
-#     finally:
-#         if connection.is_connected():
-#             cursor.close()
-#             connection.close()
-#             print("MySQL connection is closed.")
+
 
 def insert_table(name, surname, midname, email, phone, password):
     connection = get_db_connection()
     user_id = None
-    print("120")
     try:
         cursor = connection.cursor()
         cursor.execute(
@@ -119,7 +100,7 @@ def insert_table(name, surname, midname, email, phone, password):
 
 # ///////////////////
 #to get data from users table
-def get_from_table(email, password):
+def is_in_table(email, password):
     connection = mysql.connector.connect(
         host="localhost",
         user="root",
@@ -133,7 +114,7 @@ def get_from_table(email, password):
 
         if user:
             user_id = user[0]  # Припускаємо, що user_id є першим полем в таблиці `users`
-            print(user_id, type(str(user_id)))
+            print(user_id)
 
             # Перевіряємо, чи є запис в таблиці `teacher` для цього користувача
             cursor.execute("SELECT id FROM teacher WHERE user_id = %s", (user_id,))

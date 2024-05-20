@@ -21,7 +21,7 @@ def create_teacher_table():
                     education VARCHAR(255),
                     group_count INT,
                     indiv_count INT,
-                    level INT,
+                    level VARCHAR(255),
                     start_work DATE,
                     FOREIGN KEY (user_id) REFERENCES users(id)
                 )
@@ -64,13 +64,10 @@ def insert_teacher(user_id, education, group_count, indiv_count, level, start_wo
 
 
 def insert_user_and_teacher(name, surname, midname, email, phone, password, education, group_count, indiv_count, level, start_work):
-    print("11")
     user_id = db_funcs.insert_table(name, surname, midname, email, phone, password)
-    print("a")
-    print(user_id)
     if user_id:
-        print("b")
         insert_teacher(user_id, education, group_count, indiv_count, level, start_work)
+        return user_id
     else:
         print("Failed to insert user, teacher record not created.")
 

@@ -35,7 +35,6 @@ def registration():
         email = request.form['email']
         phone = request.form['phone']
         password = request.form['password']
-        print("222222")
 
         # Зберігаємо дані користувача у базі даних
         db_funcs.insert_table(name, surname, midname, email, phone, password)
@@ -49,11 +48,9 @@ def registration():
 
 @app.route('/teacher_code', methods=['GET', 'POST'])
 def teacher_code():
-    print("333333")
     if request.method == 'POST':
         secret_code = request.form['secret_code']
         if secret_code == TEACHER_SECRET_CODE:
-            print("4444444444")
             return redirect(url_for('register_teacher'))
         else:
             error = "Incorrect secret code. Please try again."
@@ -74,10 +71,11 @@ def register_teacher():
         education = request.form['education']
         level = request.form['level']
         start_work = request.form['start_work']
-        db_teacher.insert_user_and_teacher(name, surname, midname, email, phone, password, education, 0, 0,
-                                level, start_work)
+        user_id = db_teacher.insert_user_and_teacher(name, surname, midname, email, phone, password,
+                                    education, 0, 0, level, start_work)
         session['logged'] = True
         session['role'] = 'teacher'
+        session['user_id'] = user_id
         return redirect(url_for('index'))
     return render_template('register_teacher.html')
 
@@ -87,7 +85,7 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        user_data = db_funcs.get_from_table(email, password)
+        user_data = db_funcs.is_in_table(email, password)
 
         if user_data['logged_in'] == True:
             session['logged'] = True
@@ -112,8 +110,8 @@ def sign_out():
 
 @app.route('/profiles/teacher')
 def teacher_profile():
-    # Витягнемо інформацію про користувача та вчителя
-    user_id = 123  # Замініть це на реальний ID користувача
+
+    user_id = session['user_id']
     user_teacher_info = db_teacher.get_teacher_info(user_id)
     return render_template('/profiles/teacher.html', user=user_teacher_info)
 
