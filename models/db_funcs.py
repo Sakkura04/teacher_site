@@ -28,6 +28,7 @@ def create_user_table():
                     midname VARCHAR(255),
                     email VARCHAR(255),
                     phone VARCHAR(255),
+                    photo VARCHAR(255),
                     password VARCHAR(255)
                 )
             """)
@@ -72,14 +73,14 @@ def table_exists(table_name):
 
 
 
-def insert_table(name, surname, midname, email, phone, password):
+def insert_table(name, surname, midname, email, phone, password, photo_path):
     connection = get_db_connection()
     user_id = None
     try:
         cursor = connection.cursor()
         cursor.execute(
-            "INSERT INTO users (name, surname, midname, email, phone, password) VALUES (%s, %s, %s, %s, %s, %s)",
-            (name, surname, midname, email, phone, password))
+            "INSERT INTO users (name, surname, midname, email, phone, photo, password) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+            (name, surname, midname, email, phone, photo_path, password))
         connection.commit()
 
         # Отримання user_id вставленого запису
@@ -114,18 +115,19 @@ def is_in_table(email, password):
 
         if user:
             user_id = user[0]  # Припускаємо, що user_id є першим полем в таблиці `users`
-            print(user_id)
 
             # Перевіряємо, чи є запис в таблиці `teacher` для цього користувача
             cursor.execute("SELECT id FROM teacher WHERE user_id = %s", (user_id,))
             teacher = cursor.fetchone()
-            print(teacher)
+            # print("user " + str(user_id))
+            # print("teacher " + str(teacher))
 
-            # Якщо є запис у таблиці `teacher`, встановлюємо роль як 'teacher'
             if teacher:
                 role = 'teacher'
             else:
                 role = 'student'
+
+            print(role)
 
             # Закриваємо курсор і з'єднання
             cursor.close()

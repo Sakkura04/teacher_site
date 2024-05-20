@@ -53,19 +53,31 @@ main {
 }
 
 /* Права колонка */
+/* Головна колонка */
 .column {
     display: flex;
-    flex-direction: column;
-    justify-content: center; /* Центрування по вертикалі */
-    width: 70%; /* Займає 80% ширини батьківського контейнера */
-    height: 70%;
-    background-color: #fff;
+    justify-content: space-between; /* Розмістити елементи в одному рядку і рівномірно розподілити простір між ними */
+    align-items: center; /* Центрувати по вертикалі */
     margin: 60px;
     padding: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 5px;
-    text-align: left;
+    width: 70%; /* Займає 70% ширини батьківського контейнера */
+    height: 70%;
+    background-color: #fff;
 }
+
+/* Ліва та права колонки */
+
+.right-column {
+    width: 30%;
+}
+
+.left-column {
+    width: 70%;
+    margin-right: 4%; /* Відступ між колонками */
+}
+
 
 .column h3 {
     margin: 10px;
@@ -84,4 +96,11 @@ main {
 
 .column ul li strong {
     margin-right: 10px;
+}
+
+
+.user-photo {
+    max-width: 90%; /* Максимальна ширина фотографії */
+    height: auto; /* Автоматична висота, щоб зберегти пропорції */
+    object-fit: cover; /* Змінюємо розмір фотографії так, щоб вона повністю покривала контейнер, не зберігаючи пропорції */
 }

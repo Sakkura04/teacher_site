@@ -63,8 +63,8 @@ def insert_teacher(user_id, education, group_count, indiv_count, level, start_wo
 
 
 
-def insert_user_and_teacher(name, surname, midname, email, phone, password, education, group_count, indiv_count, level, start_work):
-    user_id = db_funcs.insert_table(name, surname, midname, email, phone, password)
+def insert_user_and_teacher(name, surname, midname, email, phone, password, photo, education, group_count, indiv_count, level, start_work):
+    user_id = db_funcs.insert_table(name, surname, midname, email, phone, password, photo)
     if user_id:
         insert_teacher(user_id, education, group_count, indiv_count, level, start_work)
         return user_id
@@ -100,3 +100,28 @@ def get_teacher_info(user_id):
             cursor.close()
             connection.close()
             print("MySQL connection is closed.")
+
+
+########      ALL THE TEACHERS
+def get_all_teachers():
+    connection = db_funcs.get_db_connection()
+    teachers = []
+    try:
+        cursor = connection.cursor(dictionary=True)
+        query = """
+                    SELECT u.name, u.surname, u.photo, t.education, t.level
+                    FROM users u
+                    LEFT JOIN teacher t ON u.id = t.user_id
+                     WHERE t.user_id IS NOT NULL -- Перевірка наявності даних в таблиці teacher
+                 """
+        cursor.execute(query)
+        teachers = cursor.fetchall()
+    except mysql.connector.Error as error:
+        print("Error fetching teachers:", error)
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            print("MySQL connection is closed.")
+    return teachers
+

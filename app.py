@@ -1,6 +1,12 @@
+import os
+
 from flask import Flask, render_template, url_for, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from fileinput import filename
+
+from werkzeug.utils import secure_filename
+
 from models import db_teacher, db_funcs
 from keyy import secret_key
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
@@ -8,9 +14,21 @@ from flask_login import UserMixin, login_user, LoginManager, login_required, log
 from teacher_secret_code import TEACHER_SECRET_CODE
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
-db = SQLAlchemy(app)
 app.secret_key = secret_key
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
+
+app.config['UPLOAD_FOLDER'] = 'static/uploads/'
+# app.config['MAX_CONTENT_PATH'] = 16 * 1024 * 1024  # Максимальний розмір файлу - 16 MB
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+if not os.path.exists(app.config['UPLOAD_FOLDER']):
+    os.makedirs(app.config['UPLOAD_FOLDER'])
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+# db = SQLAlchemy(app)
 
 
 @app.route('/')
@@ -36,13 +54,24 @@ def registration():
         phone = request.form['phone']
         password = request.form['password']
 
-        # Зберігаємо дані користувача у базі даних
-        db_funcs.insert_table(name, surname, midname, email, phone, password)
+        if 'file' not in request.files:
+            return "No photo part"
+        file = request.files['file']
+        if file.filename == '':
+            return "No selected photo"
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file_path = filename
+            file_path_save = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path_save)
 
-        session['logged'] = True
-        session['role'] = 'student'
-        # Перенаправляємо користувача на іншу сторінку
-        return redirect(url_for('index'))
+            # Зберігаємо дані користувача у базі даних
+            user_id = db_funcs.insert_table(name, surname, midname, email, phone, password, file_path)
+
+            session['logged'] = True
+            session['role'] = 'student'
+            # Перенаправляємо користувача на іншу сторінку
+            return redirect(url_for('index'))
     return render_template('sign_up.html')
 
 
@@ -71,12 +100,26 @@ def register_teacher():
         education = request.form['education']
         level = request.form['level']
         start_work = request.form['start_work']
-        user_id = db_teacher.insert_user_and_teacher(name, surname, midname, email, phone, password,
+
+        if 'file' not in request.files:
+            return "No photo part"
+        file = request.files['file']
+        if file.filename == '':
+            return "No selected photo"
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file_path = filename
+            file_path_save = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path_save)
+            file.save(file_path)
+
+            # Зберігаємо дані користувача у базі даних
+            user_id = db_teacher.insert_user_and_teacher(name, surname, midname, email, phone, password, file_path,
                                     education, 0, 0, level, start_work)
-        session['logged'] = True
-        session['role'] = 'teacher'
-        session['user_id'] = user_id
-        return redirect(url_for('index'))
+            session['logged'] = True
+            session['role'] = 'teacher'
+            session['user_id'] = user_id
+            return redirect(url_for('index'))
     return render_template('register_teacher.html')
 
 
@@ -110,10 +153,22 @@ def sign_out():
 
 @app.route('/profiles/teacher')
 def teacher_profile():
-
     user_id = session['user_id']
     user_teacher_info = db_teacher.get_teacher_info(user_id)
     return render_template('/profiles/teacher.html', user=user_teacher_info)
+
+@app.route('/profiles/student')
+def student_profile():
+    user_id = session['user_id']
+    user_teacher_info = db_teacher.get_teacher_info(user_id)
+    return render_template('/profiles/student.html', user=user_teacher_info)
+
+
+@app.route('/teachers')
+def show_teachers():
+    teachers = db_teacher.get_all_teachers()
+    return render_template('teachers.html', teachers=teachers)
+
 
 
 @app.context_processor
@@ -134,11 +189,7 @@ def inject_is_authenticated():
 def user(name, id):
     return 'babe, ur name\'s ' + name + ' ' + str (id)
 
-#щоб за різними адресами був однаковий вивід прописуємо:
-@app.route('/hay_peach')
-@app.route('/peach')
-def Sassy():
-    return 'Sassy'
+
 
 
 class User(UserMixin):
