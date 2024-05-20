@@ -1,0 +1,87 @@
+/* Основний стиль для сторінки */
+main {
+    font-family: "Lucida Console", Courier, monospace;
+    background-color: #E2E9D2;
+    margin: 0;
+    padding: 0;
+    height: 100vh; /* Забезпечує повну висоту для контейнера */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Контейнер */
+.container {
+    display: flex;
+    height: 80vh;
+    width: 100%; /* Займає всю ширину */
+}
+
+/* Ліве меню */
+.col-md-3 {
+    width: 20%; /* Займає 20% ширини батьківського контейнера */
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 0; /* Прибрати відступ зліва */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.col-md-3 h3 {
+    padding: 10px 5px 0px 45px;
+}
+
+.list-group-item {
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    display: inline-block;
+    background-color: #f4f6ee;
+}
+
+.list-group-item a {
+    text-decoration: none;
+    color: #333;
+    display: block;
+}
+
+.list-group-item a:hover {
+    color: #007bff;
+}
+
+/* Права колонка */
+.column {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Центрування по вертикалі */
+    width: 70%; /* Займає 80% ширини батьківського контейнера */
+    height: 70%;
+    background-color: #fff;
+    margin: 60px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    text-align: left;
+}
+
+.column h3 {
+    margin: 10px;
+}
+
+.column ul {
+    list-style-type: none;
+    padding: 0;
+    margin:30px;
+}
+
+.column ul li {
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.column ul li strong {
+    margin-right: 10px;
+}

@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% block style_css %}{%endblock%}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <title>BIRD SCHOOL</title>
 </head>
 <body>
@@ -18,11 +19,16 @@
             <a href="#">Join us!  </a>
             <a href="/articles">Articles  </a>
             {% if is_authenticated %}
-                <a href="/sign_out">Sign out </a>
-                <a href="/my cabinet">Sign out </a>
+                {% if session['role'] == 'teacher' %}
+                    <a href="/profiles/teacher">Profile </a>
+                {% elif session['role'] == 'student'%}
+                    <a href="/profile/student">Profiles </a>
+                {% endif %}
+                <a href="/sign_out">Log out </a>
             {% else %}
-                <a href="/sign_up">Sign up  </a>
+                <a href="/sign_up">Sign up </a>
             {% endif %}
+
         </div>
     </header>
     <div class="black-line"></div>

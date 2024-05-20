@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from models import db_teacher, db_funcs
 from keyy import secret_key
-from flask_session import Session
+from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 # Секретний код для реєстрації вчителя
 from teacher_secret_code import TEACHER_SECRET_CODE
 
@@ -11,17 +11,6 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
 db = SQLAlchemy(app)
 app.secret_key = secret_key
-
-
-class Article(db.Model):
-    id = db.Column(db.Integer, primary_key=True) #primary_key - unique field
-    title = db.Column(db.String(100), nullable = False) #100 - allowablelength of Str, nullable - can't be empty
-    intro = db.Column(db.String(300), nullable = False) #nullable - can't be empty
-    text = db.Column(db.Text, nullable = False)#data type Text is for long textes
-    date = db.Column(db.DateTime, default = datetime.utcnow)
-
-    def __repr__(self):  #when we choose any object, u'll also get an id
-        return '<Article %r>' % self.id
 
 
 @app.route('/')
@@ -32,7 +21,9 @@ def index():
 @app.route('/sign_up', methods=['GET', 'POST'])
 def registration():
     if not db_funcs.table_exists('users'):
-        db_funcs.create_table()
+        db_funcs.create_user_table()
+    if not db_funcs.table_exists('teacher'):
+        db_teacher.create_teacher_table()
 
     if request.method == 'POST':
         if 'teacher' in request.form:
@@ -44,10 +35,13 @@ def registration():
         email = request.form['email']
         phone = request.form['phone']
         password = request.form['password']
+        print("222222")
 
         # Зберігаємо дані користувача у базі даних
         db_funcs.insert_table(name, surname, midname, email, phone, password)
 
+        session['logged'] = True
+        session['role'] = 'student'
         # Перенаправляємо користувача на іншу сторінку
         return redirect(url_for('index'))
     return render_template('sign_up.html')
@@ -55,9 +49,11 @@ def registration():
 
 @app.route('/teacher_code', methods=['GET', 'POST'])
 def teacher_code():
+    print("333333")
     if request.method == 'POST':
         secret_code = request.form['secret_code']
         if secret_code == TEACHER_SECRET_CODE:
+            print("4444444444")
             return redirect(url_for('register_teacher'))
         else:
             error = "Incorrect secret code. Please try again."
@@ -76,14 +72,13 @@ def register_teacher():
         phone = request.form['phone']
         password = request.form['password']
         education = request.form['education']
-        group_count = request.form['group_count']
-        indiv_count = request.form['indiv_count']
         level = request.form['level']
         start_work = request.form['start_work']
-        db_teacher.insert_user_and_teacher(name, surname, midname, email, phone, password, education, group_count, indiv_count,
+        db_teacher.insert_user_and_teacher(name, surname, midname, email, phone, password, education, 0, 0,
                                 level, start_work)
-        return redirect(url_for('login'))
-
+        session['logged'] = True
+        session['role'] = 'teacher'
+        return redirect(url_for('index'))
     return render_template('register_teacher.html')
 
 
@@ -92,8 +87,18 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        if db_funcs.get_from_table(email, password, session):
+        user_data = db_funcs.get_from_table(email, password)
+
+        if user_data['logged_in'] == True:
+            session['logged'] = True
+            print(user_data['user_id'])
+            session['user_id'] = user_data['user_id']
+            session['role'] = user_data['role']
             return redirect(url_for('index'))
+        else:
+            error = "Invalid credentials"
+            return render_template('log_in.html', error=error)
+
     return render_template('log_in.html')
 
 
@@ -101,16 +106,25 @@ def login():
 def sign_out():
     if request.method == 'POST':
         session.pop('logged', None)  # Видаляємо ідентифікатор користувача з сесії
+        session.pop('user', None)
         return redirect(url_for('index'))
     return render_template('sign_out.html')
+
+@app.route('/profiles/teacher')
+def teacher_profile():
+    # Витягнемо інформацію про користувача та вчителя
+    user_id = 123  # Замініть це на реальний ID користувача
+    user_teacher_info = db_teacher.get_teacher_info(user_id)
+    return render_template('/profiles/teacher.html', user=user_teacher_info)
 
 
 @app.context_processor
 def inject_is_authenticated():
     if 'logged' in session:
         is_authenticated = True
-    else:
+    else :
         is_authenticated = False
+
     return dict(is_authenticated=is_authenticated)
 
 
@@ -129,8 +143,20 @@ def Sassy():
     return 'Sassy'
 
 
+class User(UserMixin):
+    def __init__(self, id, role):
+        self.id = id
+        self.role = role
+
+    def get_id(self):
+        return self.id
+
+    def is_teacher(self):
+        return self.role == 'teacher'
+
+
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
+    # with app.app_context():
+    #     db.create_all()
     app.run(debug = True)

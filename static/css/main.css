@@ -81,7 +81,9 @@ main {
 
 
 .text-block2:hover {
-    background-color: #FFF5E1; /* Молочний колір при наведенні */
+    background-color: #71a374; /* Молочний колір при наведенні */
+    transform: translateY(-3px); /* Підняття картинки на 5px при наведенні курсора */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Додати світлу тінь при наведенні курсора */
 }
 
 
@@ -95,12 +97,19 @@ main {
     display: inline-block;
     margin-right: 40px;
     font-family: "Lucida Console", Courier, monospace;
+    position: relative; /* Для позиціонування тіні */
 }
 
 .links a img {
     margin-top 50px;
-    width: 220px; /* задати ширину зображення */
-    height: 200px; /* задати висоту зображення */
+    width: 220px;
+    height: 200px;
+    transition: transform 0.2s, box-shadow 0.2s; /* Плавний перехід для трансформації і тіні */
+}
+
+.links a:hover img {
+    transform: translateY(-8px); /* Підняття картинки на 5px при наведенні курсора */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Додати світлу тінь при наведенні курсора */
 }
 
 

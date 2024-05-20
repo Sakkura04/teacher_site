@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block style_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profiles.css') }}">
+{%endblock%}
+
+{% block main %}
+<div class="container">
+    <div class="col-md-3">
+        <h3>Меню</h3>
+        <ul class="list-group">
+            <a class="list-group-item" href="/add_lesson">Додати урок</a>
+            <a class="list-group-item" href="/all_lessons">Переглянути всі уроки</a>
+            <a class="list-group-item"  href="/schedule">Подивитися розклад</a>
+        </ul>
+    </div>
+    <div class="column">
+        <h3>Інформація про користувача</h3>
+        <ul>
+            <li><strong>Ім'я:</strong> {{ user.name }}</li>
+            <li><strong>Прізвище:</strong> {{ user.surname }}</li>
+            <li><strong>По батькові:</strong> {{ user.midname }}</li>
+            <li><strong>Email:</strong> {{ user.email }}</li>
+            <li><strong>Телефон:</strong> {{ user.phone }}</li>
+            <!-- Додайте інші дані про користувача за потреби -->
+        </ul>
+    </div>
+</div>
+{% endblock %}

@@ -10,14 +10,15 @@
         <div class="container-sign">
            <h2>Registration</h2>
            <div class="registration-form">
-            <form class="new_user" id="new_user" action="/sign_up" accept-charset="UTF-8" method="post">
+            <form class="new_user" id="new_user" action="/register_teacher" accept-charset="UTF-8" method="post">
               <input type="text"  name="name" id="user_name" placeholder="Ім'я" class="input-field">
               <input type="text"  name="surname" id="user_surname" placeholder="Прізвище" class="input-field">
               <input type="text"  name="midname" id="user_midname" placeholder="По батькові" class="input-field">
               <input type="telegram" name="email" id="user_email" placeholder="Email" class="input-field" value="">
               <input type="tel"   name="phone" id="user_phone" placeholder="Номер телефону" class="input-field">
-              <input type="text" name="education" id="level" placeholder="Освіта" class="input-field">
+              <input type="text" name="level" id="level" placeholder="Рівень англійського" class="input-field">
               <input type="text" name="education" id="teacher_education" placeholder="Освіта" class="input-field">
+              <input type="text" name="start_work" id="start_work" placeholder="Початок роботи" class="input-field">
               <input type="password" name="password" id="user_password" placeholder="Пароль" class="input-field">
               <input type="submit" name="commit" value="Sign up" class="btn" data-disable-with="Sign up">
             </form>

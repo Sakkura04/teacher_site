@@ -3,12 +3,8 @@ from . import db_funcs
 
 
 def create_teacher_table():
-    connection = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="Vladasql2004",
-        database="teachSiteDb"
-    )
+    connection =  db_funcs.get_db_connection()
+
     try:
         cursor = connection.cursor()
 
@@ -47,12 +43,7 @@ def create_teacher_table():
 
 
 def insert_teacher(user_id, education, group_count, indiv_count, level, start_work):
-    connection = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="Vladasql2004",
-        database="teachSiteDb"
-    )
+    connection = db_funcs.get_db_connection()
 
     try:
         cursor = connection.cursor()
@@ -73,8 +64,42 @@ def insert_teacher(user_id, education, group_count, indiv_count, level, start_wo
 
 
 def insert_user_and_teacher(name, surname, midname, email, phone, password, education, group_count, indiv_count, level, start_work):
+    print("11")
     user_id = db_funcs.insert_table(name, surname, midname, email, phone, password)
+    print("a")
+    print(user_id)
     if user_id:
+        print("b")
         insert_teacher(user_id, education, group_count, indiv_count, level, start_work)
     else:
         print("Failed to insert user, teacher record not created.")
+
+
+
+
+########ОТРИМАТИ ІНФОРМАЦІЮ З БД
+def get_teacher_info(user_id):
+    connection = db_funcs.get_db_connection()
+
+    try:
+        cursor = connection.cursor(dictionary=True)
+        query = """
+            SELECT u.*, t.education, t.group_count, t.indiv_count, t.level, t.start_work
+            FROM users u
+            LEFT JOIN teacher t ON u.id = t.user_id
+            WHERE u.id = %s
+        """
+        cursor.execute(query, (user_id,))
+        user_teacher_info = cursor.fetchone()
+
+        return user_teacher_info
+
+    except mysql.connector.Error as error:
+        print("Error retrieving user and teacher info:", error)
+        return None
+
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            print("MySQL connection is closed.")
