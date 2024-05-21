@@ -1,10 +1,77 @@
 {% extends 'base.html' %}
-{% block title %}
-    About page
-{%endblock%}
 
-{% block body %}
+{% block style_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/articles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/registration.css') }}">
+{% endblock %}
+
+{% block main %}
 <div class="container">
-    <h1>About us! </h1>
+    {% if 'logged' in session and session['role'] == 'teacher' %}
+    <div class="create_container">
+        <h2>Написати статтю</h2>
+        <form action="{{ url_for('articles') }}" method="post">
+            <div class="form-group">
+                <label for="title">Назва</label>
+                <input type="text" name="title" id="title" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="level">Рівень</label>
+                <input type="text" name="level" id="level" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="content">Зміст</label>
+                <textarea name="content" id="content" class="form-control" rows="5" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Опублікувати</button>
+        </form>
+    </div>
+    <div class="black-line"></div>
+    {% endif %}
+
+    <form class="checkbox-form" action="{{ url_for('filtered_articles') }}" method="post">
+        <div class="checkbox-group">
+            <label>Oберіть рівень:    </label>
+              A1<input type="checkbox" name="level_a1" value="A1">
+            A2<input type="checkbox" name="level_a2" value="A2">
+            B1<input type="checkbox" name="level_b1" value="B1">
+            B2<input type="checkbox" name="level_b2" value="B2">
+            C1<input type="checkbox" name="level_c1" value="C1">
+            C2<input type="checkbox" name="level_c2" value="C2">
+            Всі<input type="checkbox" name="Всі" value="Всі">
+        </div>
+        <button type="submit" class="btn btn-primary">Пошук</button>
+    </form>
+
+    <h2 style="text-align: center">Статті</h2>
+    {% for article in articles %}
+    <div class="article">
+        <h3>{{ article.title }} ({{ article.level }})</h3>
+        <p>{{ article.content }}</p>
+        <div class="article-meta">
+            <span>Автор: {{ article.name }} {{ article.surname }}</span>
+           <div class="like-container">
+                <form action="{{ url_for('like_article_route', article_id=article.id) }}" method="post" class="inline-form">
+                    <button type="submit" class="like-button">
+                        <img src="{{ url_for('static', filename='like.png') }}" alt="Лайк">
+                    </button>
+                </form>
+                <span class="likes">{{ article.likes }}</span>
+            </div>
+        </div>
+        {% if 'logged' in session %}
+            <div class="button-group">
+                {% if session['role'] == 'teacher' and session['user_id'] == article.author_id %}
+                    <form action="{{ url_for('delete_article_route', article_id=article.id) }}" method="post" class="inline-form">
+                        <button type="submit" class="btn btn-danger">Видалити</button>
+                    </form>
+                    <form action="{{ url_for('update_article_route', article_id=article.id) }}" method="get" class="inline-form">
+                        <button type="submit" class="btn btn-warning">Оновити</button>
+                    </form>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+    {% endfor %}
 </div>
-{%endblock%}
+{% endblock %}

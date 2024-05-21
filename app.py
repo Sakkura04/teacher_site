@@ -7,7 +7,7 @@ from fileinput import filename
 
 from werkzeug.utils import secure_filename
 
-from models import db_teacher, db_funcs
+from models import db_teacher, db_funcs, db_articles
 from keyy import secret_key
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 # Секретний код для реєстрації вчителя
@@ -194,6 +194,76 @@ def update_teacher_info():
     return redirect(url_for('teacher_profile'))
 
 
+@app.route('/articles', methods=['GET', 'POST'])
+def articles():
+    if not db_funcs.table_exists('articles'):
+        db_articles.create_articles_table()
+
+    if request.method == 'POST':
+        if 'logged' in session and session['role'] == 'teacher':
+            title = request.form['title']
+            level = request.form['level']
+            content = request.form['content']
+            teacher_id = session['user_id']
+            db_articles.add_article(title, level, content, teacher_id)
+            return redirect(url_for('articles'))
+
+    articles = db_articles.get_all_articles()
+    return render_template('articles.html', articles=articles)
+
+
+# @app.route('/like_article/<int:article_id>', methods=['POST'])
+# def like_article_route(article_id):
+#     if 'logged' in session and session['role'] == 'student':
+#         db_articles.like_article(article_id)
+#     return redirect(url_for('articles'))
+
+
+@app.route('/like_article/<int:article_id>', methods=['POST'])
+def like_article_route(article_id):
+    if 'logged' in session and session['role'] == 'student':
+        db_articles.create_likes_table()
+        user_id = session['user_id']
+        db_articles.like_article(article_id, user_id)
+    return redirect(url_for('articles'))
+
+
+@app.route('/delete_article/<int:article_id>', methods=['POST'])
+def delete_article_route(article_id):
+    if 'logged' in session and session['role'] == 'teacher':
+        teacher_id = session['user_id']  # Assuming user_id is stored in session
+        db_articles.delete_article(article_id, teacher_id)
+    return redirect(url_for('articles'))
+
+
+@app.route('/update_article/<int:article_id>', methods=['GET', 'POST'])
+def update_article_route(article_id):
+    if request.method == 'GET':
+        # Відображення форми оновлення статті з наявними даними
+        article = db_articles.get_article_by_id(article_id)
+        return render_template('update_article.html', article=article)
+    elif request.method == 'POST':
+        # Оновлення статті за допомогою даних з форми
+        title = request.form['title']
+        level = request.form['level']
+        content = request.form['content']
+        db_articles.update_article(article_id, title, level, content)
+        return redirect(url_for('articles'))
+
+
+@app.route('/filtered_articles', methods=['POST'])
+def filtered_articles():
+    selected_levels = []
+    for level in ['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'Всі']:
+        if request.form.get('Всі'):
+            articles = db_articles.get_all_articles()
+            return render_template('articles.html', articles=articles)
+
+        elif request.form.get(f'level_{level.lower()}'):
+            selected_levels.append(level)
+
+    filtered_articles = db_articles.get_articles_by_level(selected_levels)
+    return render_template('articles.html', articles=filtered_articles)
 
 @app.context_processor
 def inject_is_authenticated():

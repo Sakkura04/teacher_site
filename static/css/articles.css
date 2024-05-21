@@ -1,0 +1,156 @@
+.container {
+    margin-top: 20px;
+}
+
+body, html {
+    height: 100%;
+    margin: 0;
+    background-color: #E2E9D2;
+}
+
+.create_container {
+    text-align: center
+    flex-direction: column;
+    width: 80%;
+    margin: 0 auto 25px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    background-color: #fff;
+}
+
+.create_container form {
+    margin-left: 15%;
+    margin-right: 15%;
+    width: 100%; /* Займати всю ширину контейнера */
+}
+
+
+.btn btn-primary{
+    text-align: center;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+.create_container h2{
+    text-align: center;
+}
+
+.form-group {
+    width: 70%;
+    margin-bottom: 15px;
+}
+
+
+.form-group input {
+    height: 35px;
+    width: 100%;
+    border-radius: 15px;
+}
+
+.form-group textarea {
+    height: 70px;
+    width: 100%;
+    border-radius: 20px;
+}
+
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.btn-warning:hover {
+    background-color: #e6ffcc;
+    color: #000000;
+}
+
+.btn-primary:hover {
+    background-color: #E2E9D2;
+    color: #000000;
+}
+
+
+.btn-danger:hover {
+    background-color: #ffe6f2;
+    color: #000000;
+}
+
+.inline-form {
+    display: inline;
+}
+
+.article {
+    width: 80%;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-bottom: 3%;
+    background-color: #fff;
+    transition: transform 0.2s, box-shadow 0.2s; /* Плавний перехід для трансформації і тіні */
+}
+
+.article:hover  {
+    transform: translateY(-8px); /* Підняття картинки на 5px при наведенні курсора */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Додати світлу тінь при наведенні курсора */
+}
+
+.article h3 {
+    margin-top: 0;
+}
+
+.article-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.article .likes {
+    margin-left: auto;
+}
+
+.article .button-group {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.checkbox-form {
+    margin-left: 20%;
+    margin-right: 20%
+    width: 60%;
+}
+
+.checkbox-group {
+    display: inline-block;
+    align-items: center;
+    margin: 3%;
+    font-size: 20px;
+}
+
+.checkbox-group input{
+    margin-right: 20px;
+    size: 20px;
+}
+
+.like-container {
+    display: flex;
+    align-items: center;
+}
+
+.like-button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.like-button img {
+    width: 20px;
+    height: 20px;
+}
