@@ -1,0 +1,51 @@
+{% block style_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/teachers.css') }}">
+{% endblock %}
+
+{% block main %}
+<h2 class="centered-title">Знайдені Заняття</h2>
+{% if error %}
+   <p>{{ error }}</p>
+{% endif %}
+<div class="row">
+    <div class="container">
+        {% for lesson in lessons %}
+        <div class="column">
+
+            <div class="right-column">
+                {% if lesson.stud_max == 1 %}
+                    <p><strong>Індивідуальні заняття:</strong> {{ lesson.less_name }}</p>
+                {% else %}
+                    <p><strong>Група:</strong> {{ lesson.less_name }}</p>
+                {% endif %}
+                <p><strong>Рівень навчання:</strong> {{ lesson.level }}</p>
+                <p><strong>Залишилося місць:</strong> {{ lesson.stud_max - lesson.stud_amount }}</p>
+                <p><strong>Середня оцінка:</strong> {{ lesson.avg_grade }}</p>
+                <p><strong>Час за розкладом:</strong> {{ lesson.schedule }}</p>
+                <p><strong>Викладач:</strong> <a href="/lessons/{{ lesson.id }}"> {{ lesson.name + " " + lesson.midname + " " + lesson.surname }} </a> </p>
+                {% if created %}
+                    {% if lesson in created %}
+                        <form action="/remove/{{ lesson.less_id }}" accept-charset="UTF-8" method="post" enctype="multipart/form-data">
+                        {% if lesson.stud_max == 1 %}
+                            <button class="list-group-item" type="submit"> Видалити індивідуальне заняття </button>
+                        {% else %}
+                            <button class="list-group-item" type="submit"> Видалити групу </button>
+                        {% endif %}
+                    </form>
+                    {% endif %}
+                {% endif %}
+                {% if boolean %}
+                    <form action="/enroll/{{ lesson.less_id }}" accept-charset="UTF-8" method="post" enctype="multipart/form-data">
+                        {% if lesson.stud_max == 1 %}
+                            <button class="list-group-item" type="submit"> Записатися до індивідуальних занять </button>
+                        {% else %}
+                            <button class="list-group-item" type="submit"> Записатися до групи </button>
+                        {% endif %}
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

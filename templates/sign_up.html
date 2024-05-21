@@ -10,12 +10,13 @@
         <div class="container-sign">
            <h2>Registration</h2>
            <div class="registration-form">
-            <form class="new_user" id="new_user" action="/sign_up" accept-charset="UTF-8" method="post">
+            <form class="new_user" id="new_user" action="/sign_up" accept-charset="UTF-8" method="post" enctype=multipart/form-data>
               <input type="text"  name="name" id="user_name" placeholder="Ім'я" class="input-field">
               <input type="text"  name="surname" id="user_surname" placeholder="Прізвище" class="input-field">
               <input type="text"  name="midname" id="user_midname" placeholder="По батькові" class="input-field">
               <input type="email" name="email" id="user_email" placeholder="Email" class="input-field" value="">
               <input type="tel"   name="phone" id="user_phone" placeholder="Номер телефону" class="input-field">
+              <input type="file" name="file" id="user_file"  placeholder="Фотографія" class="input-field">
               <input type="password" name="password" id="user_password" placeholder="Пароль" class="input-field">
 
               <input type="submit" name="teacher" value="I'm teacher" class="btn">

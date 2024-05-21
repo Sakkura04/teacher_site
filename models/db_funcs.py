@@ -5,7 +5,7 @@ def get_db_connection():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="Vladasql2004",
+        password="root",
         database="teachSiteDb"
     )
 
@@ -28,6 +28,7 @@ def create_user_table():
                     midname VARCHAR(255),
                     email VARCHAR(255),
                     phone VARCHAR(255),
+                    photo VARCHAR(255),
                     password VARCHAR(255)
                 )
             """)
@@ -70,19 +71,18 @@ def table_exists(table_name):
         return False
 
 
-def insert_table(name, surname, midname, email, phone, password):
+def insert_table(name, surname, midname, email, phone, password, photo_path):
     connection = get_db_connection()
     user_id = None
     try:
         cursor = connection.cursor()
         cursor.execute(
-            "INSERT INTO users (name, surname, midname, email, phone, password) VALUES (%s, %s, %s, %s, %s, %s)",
-            (name, surname, midname, email, phone, password))
+            "INSERT INTO users (name, surname, midname, email, phone, photo, password) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+            (name, surname, midname, email, phone, photo_path, password))
         connection.commit()
 
         # Отримання user_id вставленого запису
         user_id = cursor.lastrowid
-        return user_id
     except mysql.connector.Error as error:
         print("Error inserting in the table:", error)
     finally:
@@ -90,6 +90,7 @@ def insert_table(name, surname, midname, email, phone, password):
             cursor.close()
             connection.close()
             print("MySQL connection is closed.")
+    return user_id
 
 
 # ///////////////////
