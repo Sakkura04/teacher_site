@@ -84,7 +84,7 @@ def get_article_by_id(article_id):
             "SELECT * FROM articles WHERE id = %s", (article_id,)
         )
         return cursor.fetchone()
-    
+
     except mysql.connector.Error as error:
         print("Error fetching article:", error)
     finally:
