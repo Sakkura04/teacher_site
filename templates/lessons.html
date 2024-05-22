@@ -12,7 +12,7 @@
 
 <!-- Сортування та фільтрація -->
 <div class="sort-filter-container">
-    {% if personal_list %}
+    {% if personal_list and created %}
     <form method="GET" action="{{ url_for('show_lessons_teacher', teach_id=session['user_id']) }}">
     {% else %}
     <form method="GET" action="{{ url_for('show_lessons') }}">
