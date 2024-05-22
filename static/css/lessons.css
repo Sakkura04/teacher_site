@@ -148,3 +148,10 @@ main {
     background-color: #fff;
     color: #000;
 }
+
+.error {
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #ff0000;
+}
