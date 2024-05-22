@@ -10,6 +10,9 @@
         <div class="container-sign">
            <h2>Student Registration</h2>
            <div class="registration-form">
+            {% if error %}
+                <p>{{ error }}</p>
+            {% endif %}
             <form class="new_user" id="new_user" action="/register_student" accept-charset="UTF-8" method="post" enctype=multipart/form-data>
               <input required type="text"  name="name" id="user_name" placeholder="Ім'я" class="input-field">
               <input required type="text"  name="surname" id="user_surname" placeholder="Прізвище" class="input-field">

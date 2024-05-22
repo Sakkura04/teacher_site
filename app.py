@@ -1,13 +1,10 @@
 import os
-from flask import Flask, render_template, url_for, request, redirect, session
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from flask import Flask, render_template, url_for, redirect, session
 from fileinput import filename
 from werkzeug.utils import secure_filename
 from models import db_teacher, db_student, db_funcs, db_lesson, db_articles
 from keyy import secret_key
-from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
-from flask_session import Session
+from flask_login import UserMixin
 # Секретний код для реєстрації вчителя
 from teacher_secret_code import TEACHER_SECRET_CODE
 
@@ -120,10 +117,13 @@ def register_teacher():
                 # Зберігаємо дані користувача у базі даних
             user_id = db_teacher.insert_user_and_teacher(name, surname, midname, email, phone, password, file_path,
                                                         education, group_count, indiv_count, level, start_work)
-        session['logged'] = True
-        session['role'] = 'teacher'
-        session['user_id'] = user_id
-        return redirect(url_for('index'))
+        if user_id:
+            session['logged'] = True
+            session['role'] = 'teacher'
+            session['user_id'] = user_id
+            return redirect(url_for('index'))
+        else:
+            return render_template('register_teacher.html', error="Користувач з такими даними вже був введений.")
 
     return render_template('register_teacher.html')
 
@@ -170,10 +170,13 @@ def register_student():
 
         user_id = db_student.insert_user_and_student(name, surname, midname, email, phone, password, file_path,
                                                          lesson_id, grade, level, start_educ)
-        session['logged'] = True
-        session['role'] = 'student'
-        session['user_id'] = user_id
-        return redirect(url_for('index'))
+        if user_id:
+            session['logged'] = True
+            session['role'] = 'teacher'
+            session['user_id'] = user_id
+            return redirect(url_for('index'))
+        else:
+            return render_template('register_student.html', error="Користувач з такими даними вже був введений.")
 
     return render_template('register_student.html')
 
@@ -511,10 +514,9 @@ def articles():
 @app.route('/like_article/<int:article_id>', methods=['POST'])
 def like_article_route(article_id):
     if 'logged' in session:
-        if session['role'] == 'student':
-            db_articles.create_likes_table()
-            user_id = session['user_id']
-            db_articles.like_article(article_id, user_id)
+        db_articles.create_likes_table()
+        user_id = session['user_id']
+        db_articles.like_article(article_id, user_id)
     return redirect(url_for('articles'))
 
 
@@ -545,7 +547,7 @@ def update_article_route(article_id):
 @app.route('/filtered_articles', methods=['POST'])
 def filtered_articles():
     selected_levels = []
-    for level in ['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'Всі']:
+    for level in ['A0', 'A1', 'A1+', 'A2', 'A2+', 'B1', 'B1+', 'B2', 'C1', 'C2', 'Всі']:
         if request.form.get('Всі'):
             articles = db_articles.get_all_articles()
             return render_template('articles.html', articles=articles)
@@ -557,24 +559,26 @@ def filtered_articles():
     return render_template('articles.html', articles=filtered_articles)
 
 
-@app.route('/schedule')
-def schedule():
+@app.route('/schedule/<int:user_id>')
+def schedule(user_id):
     # Отримання розкладу з бази даних
-    schedule = db_teacher.get_schedule()
-
+    schedule = db_teacher.get_schedule(user_id)
+    days = []
     # Групування розкладу по днях
     grouped_schedule = {}
     for lesson in schedule:
-        day = lesson['days_of_week']
-        if day not in grouped_schedule:
-            grouped_schedule[day] = []
-        grouped_schedule[day].append(lesson)
+        days = lesson['days_of_week'].split(",")
+        for day in days:
+            if day not in grouped_schedule:
+                grouped_schedule[day] = []
+            grouped_schedule[day].append(lesson)
 
     # Сортування розкладу в кожному дні за часом
     for day in grouped_schedule:
         grouped_schedule[day] = sorted(grouped_schedule[day], key=lambda x: x['schedule'])
 
-    return render_template('schedule.html', grouped_schedule=grouped_schedule)
+    print(grouped_schedule.keys())
+    return render_template('schedule.html', grouped_schedule=grouped_schedule, days=grouped_schedule.keys())
 
 
 @app.context_processor

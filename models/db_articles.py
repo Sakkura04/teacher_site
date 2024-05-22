@@ -96,9 +96,10 @@ def get_article_by_id(article_id):
 
 def get_articles_by_level(levels):
     connection = db_funcs.get_db_connection()
+    articles = None
     try:
         cursor = connection.cursor(dictionary=True)
-        query = "SELECT * FROM articles WHERE level IN (%s)"
+        query = "SELECT a.*, u.name, u.surname FROM articles a INNER JOIN users u ON a.author_id = u.id WHERE a.level IN (%s)"
         # Генеруємо рядок з %s для кожного рівня у списку levels
         placeholders = ', '.join(['%s'] * len(levels))
         query = query % placeholders
@@ -119,7 +120,7 @@ def get_all_articles():
     articles = []
     try:
         cursor = connection.cursor(dictionary=True)
-        cursor.execute("SELECT a.*, u.name, u.surname FROM articles a JOIN users u ON a.author_id = u.id")
+        cursor.execute("SELECT a.*, u.name, u.surname FROM articles a INNER JOIN users u ON a.author_id = u.id")
         articles = cursor.fetchall()
     except mysql.connector.Error as error:
         print("Error fetching articles:", error)

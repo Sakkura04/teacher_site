@@ -25,7 +25,6 @@
                 <p><strong>Оцінка:</strong> {{ student.grade }}</p>
                 <p><strong>Група:</strong> {{ student.less_name }}</p>
                 {% if enrolled %}
-                    <p><strong>Nigga</strong></p>
                     {% if student in enrolled %}
                         <form action="/evaluate/{{ student.id }}" accept-charset="UTF-8" method="post" enctype="multipart/form-data" class="evaluation-form">
                             <div class="input-container">

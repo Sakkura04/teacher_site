@@ -58,8 +58,8 @@ def insert_lesson(user_id, less_name, stud_amount, stud_max, level, avg_grade, s
         query = """
             SELECT l.schedule, l.days_of_week
             FROM lesson l
-            INNER JOIN teacher t ON l.teacher_id = t.user_id
-            WHERE l.teacher_id = %s
+            INNER JOIN teacher t ON l.teacher_id = t.teach_id
+            WHERE t.user_id = %s
         """
         cursor.execute(query, (user_id,))
         lessons = cursor.fetchall()
