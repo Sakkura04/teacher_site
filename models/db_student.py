@@ -102,7 +102,7 @@ def get_all_students():
     try:
         cursor = connection.cursor(dictionary=True)
         query = """
-            SELECT u.id, u.name, u.surname, u.photo, s.grade, l.less_id, l.less_name
+            SELECT u.id, u.name, u.surname, u.photo, s.grade, s.level, l.less_id, l.less_name
             FROM users u
             INNER JOIN student s ON u.id = s.user_id
             LEFT JOIN lesson l ON s.lesson_id = l.less_id
@@ -125,7 +125,7 @@ def get_students_by_lesson(less_id):
     try:
         cursor = connection.cursor(dictionary=True)
         query = """
-            SELECT u.id, u.name, u.surname, u.photo, s.grade, l.less_id, l.less_name
+            SELECT u.id, u.name, u.surname, u.photo, s.grade, s.level, l.less_id, l.less_name
             FROM users u
             INNER JOIN student s ON u.id = s.user_id
             INNER JOIN lesson l ON s.lesson_id = l.less_id
@@ -149,7 +149,7 @@ def get_students_by_teacher(teach_id):
     try:
         cursor = connection.cursor(dictionary=True)
         query = """
-            SELECT u.id
+            SELECT u.id, u.name, u.surname, u.level, u.photo, s.grade, l.less_id, l.less_name
             FROM users u
             INNER JOIN student s ON u.id = s.user_id
             INNER JOIN lesson l ON s.lesson_id = l.less_id

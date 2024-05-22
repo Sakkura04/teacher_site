@@ -411,11 +411,15 @@ def update_student_info():
         if session['role'] != 'student':
             return redirect(url_for('index'))
     user_id = session.get('user_id')
+    stats = db_student.get_student_info(user_id)
     name = request.form['name']
     surname = request.form['surname']
     midname = request.form['midname']
     email = request.form['email']
-    level = request.form['level']
+    print(stats)
+    level = stats["level"]
+    if not stats["less_id"]:
+        level = request.form['level']
     start_educ = request.form['start_educ']
     phone = request.form['phone']
     photo = request.files['photo']

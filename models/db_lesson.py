@@ -179,7 +179,11 @@ def calculate_avg(less_id):
             GROUP BY l.less_id
         """
         cursor.execute(query, (less_id,))
-        avg = cursor.fetchone()[0]
+        temp = cursor.fetchone()
+        if temp is not None:
+            avg = cursor.fetchone()[0]
+        else:
+            avg = 0
         print(avg)# Отримання першого елемента кортежу
         query = """
             UPDATE lesson

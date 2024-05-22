@@ -49,7 +49,12 @@
         </div>
 
         <div class="right-column">
-            <img class="user-photo" src="{{ url_for('static', filename='uploads/' + user.photo) }}" alt="User Photo">
+            {% if user.photo %}
+                <img class="user-photo" src="{{ url_for('static', filename='uploads/' + user.photo) }}" alt="User Photo">
+            {% else %}
+                <img class="user-photo" src="{{ url_for('static', filename='default.png') }}" alt="Default Photo">
+            {% endif %}
+            <br>
             <label for="photo"><strong>Змінити фото:</strong></label>
             <input type="file" name="photo" id="photo" onchange="syncPhotoInput()">
         </div>

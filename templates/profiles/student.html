@@ -27,19 +27,23 @@
                     <li><strong>Прізвище:</strong> <input required type="text" name="surname" value="{{ user.surname }}"></li>
                     <li><strong>По батькові:</strong> <input required type="text" name="midname" value="{{ user.midname }}"></li>
                     <li><strong>Email:</strong> <input required type="email" name="email" value="{{ user.email }}"></li>
-                    <li><strong>Рівень знання англійської мови:</strong> <select required name="level">
-                        <option value="{{ user.level }}" selected>{{ user.level }}</option>
-                        <option value="A0">A0</option>
-                        <option value="A1">A1</option>
-                        <option value="A1+">A1+</option>
-                        <option value="A2">A2</option>
-                        <option value="A2+">A2+</option>
-                        <option value="B1">B1</option>
-                        <option value="B1+">B1+</option>
-                        <option value="B2">B2</option>
-                        <option value="C1">C1</option>
-                        <option value="C2">C2</option>
-                    </select></li>
+                    {% if user.less_id %}
+                        <li><strong>Рівень знання англійської мови:</strong> {{ user.level }} </li>
+                    {% else %}
+                        <li><strong>Рівень знання англійської мови:</strong> <select required name="level">
+                            <option value="{{ user.level }}" selected>{{ user.level }}</option>
+                            <option value="A0">A0</option>
+                            <option value="A1">A1</option>
+                            <option value="A1+">A1+</option>
+                            <option value="A2">A2</option>
+                            <option value="A2+">A2+</option>
+                            <option value="B1">B1</option>
+                            <option value="B1+">B1+</option>
+                            <option value="B2">B2</option>
+                            <option value="C1">C1</option>
+                            <option value="C2">C2</option>
+                        </select></li>
+                    {% endif %}
                     <li><strong>Почав навчатися:</strong> <input required type="date" name="start_educ" value="{{ user.start_educ }}"></li>
                     <li><strong>Телефон:</strong> <input required type="tel" name="phone" value="{{ user.phone }}"></li>
                     <li style="display: none;"><input type="file" name="photo" id="hidden-photo"></li>
@@ -56,6 +60,7 @@
             {% else %}
                 <img class="user-photo" src="{{ url_for('static', filename='default.png') }}" alt="Default Photo">
             {% endif %}
+            <br>
             <label for="photo"><strong>Змінити фото:</strong></label>
             <input type="file" name="photo" id="photo" onchange="syncPhotoInput()">
         </div>
