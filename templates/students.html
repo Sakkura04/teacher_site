@@ -24,15 +24,18 @@
                 <p><strong>Рівень:</strong> {{ student.level }}</p>
                 <p><strong>Оцінка:</strong> {{ student.grade }}</p>
                 <p><strong>Група:</strong> {{ student.less_name }}</p>
-                {% if session['role']== 'teacher' %}
-                    <form action="/evaluate/{{ student.id }}" accept-charset="UTF-8" method="post" enctype="multipart/form-data" class="evaluation-form">
-                        <div class="input-container">
-                            <input required type="number" name="grade" id="grade" placeholder="Нова оцінка" class="input-field">
-                        </div>
-                        <div class="button-container">
-                            <button class="btn" type="submit">Оновити оцінку</button>
-                        </div>
-                    </form>
+
+                {% if enrolled %}
+                    {% if student in enrolled %}
+                        <form action="/evaluate/{{ student.id }}" accept-charset="UTF-8" method="post" enctype="multipart/form-data" class="evaluation-form">
+                            <div class="input-container">
+                                <input required type="number" name="grade" id="grade" placeholder="Нова оцінка" class="input-field">
+                            </div>
+                            <div class="button-container">
+                                <button class="btn" type="submit">Оновити оцінку</button>
+                            </div>
+                        </form>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>

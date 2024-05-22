@@ -274,7 +274,8 @@ def show_students():
     if 'logged' in session:
         if session['role'] == 'teacher':
             enrolled = db_student.get_students_by_teacher(session['user_id'])
-    return render_template('students.html', students=students, enrolled=enrolled)
+            print(enrolled)
+    return render_template('students.html', students=students, enrolled=enrolled, session=session)
 
 
 @app.route('/students/<int:less_id>')
@@ -284,7 +285,8 @@ def show_students_lesson(less_id):
     if 'logged' in session:
         if session['role'] == 'teacher':
             enrolled = db_student.get_students_by_teacher(session['user_id'])
-    return render_template('students.html', students=students, enrolled=enrolled)
+            print(enrolled)
+    return render_template('students.html', students=students, enrolled=enrolled, session=session)
 
 
 @app.route('/lessons')
@@ -319,7 +321,7 @@ def show_lessons():
         if created:
             created.sort(key=lambda x: x['schedule'])
 
-    return render_template('lessons.html', lessons=lessons, created=created, boolean=boolean, personal_list=personal_list)
+    return render_template('lessons.html', lessons=lessons, created=created, boolean=boolean, personal_list=personal_list, session=session)
 
 
 @app.route('/lessons/<int:teach_id>')
@@ -352,7 +354,7 @@ def show_lessons_teacher(teach_id):
         if created:
             created.sort(key=lambda x: x['schedule'])
 
-    return render_template('lessons.html', lessons=lessons, created=created, boolean=boolean, personal_list=personal_list)
+    return render_template('lessons.html', lessons=lessons, created=created, boolean=boolean, personal_list=personal_list, session=session)
 
 
 
@@ -368,7 +370,7 @@ def remove_lesson_route(lesson_id):
     success = db_lesson.remove_lesson(lesson_id)
     if not success:
         error = "Error during lesson removal."
-        return render_template('your_lessons.html', error=error)
+        return render_template('lessons.html', error=error)
 
     # Після успішного видалення перенаправлення на сторінку вчителя
     return redirect(url_for('teacher_profile'))
