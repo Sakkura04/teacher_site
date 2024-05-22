@@ -1,0 +1,36 @@
+.schedule {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 20px;
+    overflow-x: auto;
+    padding: 20px;
+    box-sizing: border-box; /* Включає паддінги та бордюри в загальну ширину та висоту */
+}
+
+.day {
+    flex: 0 0 auto;
+    min-width: 200px;
+    background-color: #f9f9f9;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+h1 {
+    text-align: center;
+}
+
+.day table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.day table th, .day table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.day table th {
+    background-color: #f2f2f2;
+}

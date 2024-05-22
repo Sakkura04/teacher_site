@@ -180,8 +180,11 @@ def register_student():
 @app.route('/add_lesson', methods=['GET', 'POST'])
 def add_lesson():
     db_lesson.create_lesson_table()
-    if 'logged' not in session or session['role'] != 'teacher':
+    if 'logged' not in session:
         return redirect(url_for('index'))
+    else:
+        if session['role'] != 'teacher':
+            return redirect(url_for('index'))
 
     if request.method == 'POST':
         teacher_id = session['user_id']
@@ -236,8 +239,11 @@ def sign_out():
 
 @app.route('/profiles/teacher')
 def teacher_profile():
-    if 'logged' not in session or session['role'] != 'teacher':
+    if 'logged' not in session:
         return redirect(url_for('index'))
+    else:
+        if session['role'] != 'teacher':
+            return redirect(url_for('index'))
     user_id = session['user_id']
     user_teacher_info = db_teacher.get_teacher_info(user_id)
     return render_template('/profiles/teacher.html', user=user_teacher_info)
@@ -245,8 +251,11 @@ def teacher_profile():
 
 @app.route('/profiles/student')
 def student_profile():
-    if 'logged' not in session or session['role'] != 'student':
+    if 'logged' not in session:
         return redirect(url_for('index'))
+    else:
+        if session['role'] != 'student':
+            return redirect(url_for('index'))
     user_id = session['user_id']
     user_student_info = db_student.get_student_info(user_id)
     return render_template('/profiles/student.html', user=user_student_info)
@@ -262,8 +271,9 @@ def show_teachers():
 def show_students():
     students = db_student.get_all_students()
     enrolled = None
-    if 'logged' in session and session['role'] == 'teacher':
-        enrolled = db_student.get_students_by_teacher(session['user_id'])
+    if 'logged' in session:
+        if session['role'] == 'teacher':
+            enrolled = db_student.get_students_by_teacher(session['user_id'])
     return render_template('students.html', students=students, enrolled=enrolled)
 
 
@@ -271,8 +281,9 @@ def show_students():
 def show_students_lesson(less_id):
     students = db_student.get_students_by_lesson(less_id)
     enrolled = None
-    if 'logged' in session and session['role'] == 'teacher':
-        enrolled = db_student.get_students_by_teacher(session['user_id'])
+    if 'logged' in session:
+        if session['role'] == 'teacher':
+            enrolled = db_student.get_students_by_teacher(session['user_id'])
     return render_template('students.html', students=students, enrolled=enrolled)
 
 
@@ -283,39 +294,76 @@ def show_lessons():
 
     lessons = db_lesson.get_all_lessons()
 
+    created = None
+    boolean = False
+    personal_list = False
+    if 'logged' in session:
+        if session['role'] == 'teacher':
+            created = db_lesson.get_lessons_by_teacher(session['user_id'])
+
+    if 'logged' in session:
+        if session['role'] == 'student':
+            boolean = True
+
     if level:
         lessons = [lesson for lesson in lessons if lesson['level'] == level]
+        if created:
+            created = [create for create in created if create['level'] == level]
 
     if sort == 'places':
         lessons.sort(key=lambda x: x['stud_max'] - x['stud_amount'], reverse=True)
+        if created:
+            created.sort(key=lambda x: x['stud_max'] - x['stud_amount'], reverse=True)
     elif sort == 'schedule':
         lessons.sort(key=lambda x: x['schedule'])
+        if created:
+            created.sort(key=lambda x: x['schedule'])
 
-    created = None
-    boolean = False
-    if 'logged' in session and session['role'] == 'teacher':
-        created = db_lesson.get_lessons_by_teacher(session['user_id'])
-    if 'logged' in session and session['role'] == 'student':
-        boolean = True
-
-    return render_template('lessons.html', lessons=lessons, created=created, boolean=boolean)
+    return render_template('lessons.html', lessons=lessons, created=created, boolean=boolean, personal_list=personal_list)
 
 
 @app.route('/lessons/<int:teach_id>')
 def show_lessons_teacher(teach_id):
+    sort = request.args.get('sort')
+    level = request.args.get('level')
+
     lessons = db_lesson.get_lessons_by_teacher(teach_id)
+
+    created = None
     boolean = False
-    if 'logged' in session and session['role'] == 'student':
-        boolean = True
-    return render_template('lessons.html', lessons=lessons, created=lessons, boolean=boolean)
+    personal_list = True
+    if 'logged' in session:
+        if session['role'] == 'student':
+            boolean = True
+        if session['role'] == 'teacher':
+            created = created = db_lesson.get_lessons_by_teacher(session['user_id'])
+
+    if level:
+        lessons = [lesson for lesson in lessons if lesson['level'] == level]
+        if created:
+            created = [create for create in created if create['level'] == level]
+
+    if sort == 'places':
+        lessons.sort(key=lambda x: x['stud_max'] - x['stud_amount'], reverse=True)
+        if created:
+            created.sort(key=lambda x: x['stud_max'] - x['stud_amount'], reverse=True)
+    elif sort == 'schedule':
+        lessons.sort(key=lambda x: x['schedule'])
+        if created:
+            created.sort(key=lambda x: x['schedule'])
+
+    return render_template('lessons.html', lessons=lessons, created=created, boolean=boolean, personal_list=personal_list)
 
 
 
 
 @app.route('/remove/<int:lesson_id>', methods=['POST'])
 def remove_lesson_route(lesson_id):
-    if 'logged' not in session or session['role'] != 'teacher':
+    if 'logged' not in session:
         return redirect(url_for('index'))
+    else:
+        if session['role'] != 'teacher':
+            return redirect(url_for('index'))
 
     success = db_lesson.remove_lesson(lesson_id)
     if not success:
@@ -328,9 +376,12 @@ def remove_lesson_route(lesson_id):
 
 @app.route('/update_teacher_info', methods=['POST'])
 def update_teacher_info():
-    if 'logged' not in session or session['role'] != 'teacher':
-        return redirect(url_for('index'))  # Redirect to index if user not logged in
-    user_id = session.get('user_id')  # Assuming you store the user's ID in the session
+    if 'logged' not in session:
+        return redirect(url_for('index'))
+    else:
+        if session['role'] != 'teacher':
+            return redirect(url_for('index'))
+    user_id = session.get('user_id')
     name = request.form['name']
     surname = request.form['surname']
     midname = request.form['midname']
@@ -354,14 +405,21 @@ def update_teacher_info():
 
 @app.route('/update_student_info', methods=['POST'])
 def update_student_info():
-    if 'logged' not in session or session['role'] != 'student':
-        return redirect(url_for('index'))  # Redirect to index if user not logged in
-    user_id = session.get('user_id')  # Assuming you store the user's ID in the session
+    if 'logged' not in session:
+        return redirect(url_for('index'))
+    else:
+        if session['role'] != 'student':
+            return redirect(url_for('index'))
+    user_id = session.get('user_id')
+    stats = db_student.get_student_info(user_id)
     name = request.form['name']
     surname = request.form['surname']
     midname = request.form['midname']
     email = request.form['email']
-    level = request.form['level']
+    print(stats)
+    level = stats["level"]
+    if not stats["less_id"]:
+        level = request.form['level']
     start_educ = request.form['start_educ']
     phone = request.form['phone']
     photo = request.files['photo']
@@ -378,8 +436,11 @@ def update_student_info():
 
 @app.route('/evaluate/<int:user_id>', methods=['POST'])
 def evaluate(user_id):
-    if 'logged' not in session or session['role'] != 'teacher':
-        return redirect(url_for('index'))  # Redirect to index if user not logged in
+    if 'logged' not in session:
+        return redirect(url_for('index'))
+    else:
+        if session['role'] != 'teacher':
+            return redirect(url_for('index'))
     grade = request.form['grade']
     less_id = db_student.evaluate_grade(user_id, grade)
     print(less_id)
@@ -390,8 +451,11 @@ def evaluate(user_id):
 
 @app.route('/enroll/<int:less_id>', methods=['GET', 'POST'])
 def enroll(less_id):
-    if 'logged' not in session or session['role'] != 'student':
+    if 'logged' not in session:
         return redirect(url_for('index'))
+    else:
+        if session['role'] != 'student':
+            return redirect(url_for('index'))
     user_id = session['user_id']
     res = db_student.enroll(user_id, less_id)
     if res != "Success.":
@@ -407,8 +471,11 @@ def enroll(less_id):
 
 @app.route('/retire')
 def retire():
-    if 'logged' not in session or session['role'] != 'student':
+    if 'logged' not in session:
         return redirect(url_for('index'))
+    else:
+        if session['role'] != 'student':
+            return redirect(url_for('index'))
     user_id = session['user_id']
     lesson_id = db_student.retire(user_id)
     if lesson_id != -1:
@@ -425,13 +492,14 @@ def articles():
         db_articles.create_likes_table()
 
     if request.method == 'POST':
-        if 'logged' in session and session['role'] == 'teacher':
-            title = request.form['title']
-            level = request.form['level']
-            content = request.form['content']
-            teacher_id = session['user_id']
-            db_articles.add_article(title, level, content, teacher_id)
-            return redirect(url_for('articles'))  # Перенаправлення на сторінку зі статтями після успішного додавання
+        if 'logged' in session:
+            if session['role'] == 'teacher':
+                title = request.form['title']
+                level = request.form['level']
+                content = request.form['content']
+                teacher_id = session['user_id']
+                db_articles.add_article(title, level, content, teacher_id)
+                return redirect(url_for('articles'))  # Перенаправлення на сторінку зі статтями після успішного додавання
 
     articles = db_articles.get_all_articles()
     return render_template('articles.html', articles=articles)
@@ -440,18 +508,20 @@ def articles():
 
 @app.route('/like_article/<int:article_id>', methods=['POST'])
 def like_article_route(article_id):
-    if 'logged' in session and session['role'] == 'student':
-        db_articles.create_likes_table()
-        user_id = session['user_id']
-        db_articles.like_article(article_id, user_id)
+    if 'logged' in session:
+        if session['role'] == 'student':
+            db_articles.create_likes_table()
+            user_id = session['user_id']
+            db_articles.like_article(article_id, user_id)
     return redirect(url_for('articles'))
 
 
 @app.route('/delete_article/<int:article_id>', methods=['POST'])
 def delete_article_route(article_id):
-    if 'logged' in session and session['role'] == 'teacher':
-        teacher_id = session['user_id']  # Assuming user_id is stored in session
-        db_articles.delete_article(article_id, teacher_id)
+    if 'logged' in session:
+        if session['role'] == 'teacher':
+            teacher_id = session['user_id']
+            db_articles.delete_article(article_id, teacher_id)
     return redirect(url_for('articles'))
 
 
@@ -485,26 +555,25 @@ def filtered_articles():
     return render_template('articles.html', articles=filtered_articles)
 
 
-@app.route('/schedule')
-def schedule():
+@app.route('/schedule/<int:user_id>')
+def schedule(user_id):
     # Отримання розкладу з бази даних
-    schedule = db_teacher.get_schedule()
-
-    # Групування розкладу по днях
+    schedule = db_teacher.get_schedule(user_id)
+    days = []
     grouped_schedule = {}
     for lesson in schedule:
-        day = lesson['days_of_week']
-        if day not in grouped_schedule:
-            grouped_schedule[day] = []
-        grouped_schedule[day].append(lesson)
+        days = lesson['days_of_week'].split(",")
+        for day in days:
+            if day not in grouped_schedule:
+                grouped_schedule[day] = []
+            grouped_schedule[day].append(lesson)
 
     # Сортування розкладу в кожному дні за часом
     for day in grouped_schedule:
         grouped_schedule[day] = sorted(grouped_schedule[day], key=lambda x: x['schedule'])
 
-    return render_template('schedule.html', grouped_schedule=grouped_schedule)
-
-
+    print(grouped_schedule.keys())
+    return render_template('schedule.html', grouped_schedule=grouped_schedule, days=grouped_schedule.keys())
 
 
 @app.context_processor

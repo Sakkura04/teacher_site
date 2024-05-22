@@ -1,5 +1,5 @@
 import mysql.connector
-from back.models import db_funcs
+from . import db_funcs
 
 
 def create_articles_table():

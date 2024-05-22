@@ -96,12 +96,7 @@ def insert_table(name, surname, midname, email, phone, password, photo_path):
 # ///////////////////
 #to get data from users table
 def is_in_table(email, password):
-    connection = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="Vladasql2004",
-        database="teachSiteDb"
-    )
+    connection = get_db_connection()
     try:
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM users WHERE email = %s AND password = %s", (email, password))

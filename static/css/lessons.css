@@ -1,4 +1,4 @@
-/* Основний стиль для сторінки */
+
 main {
     font-family: "Lucida Console", Courier, monospace;
     background-color: #E2E9D2;
@@ -147,4 +147,11 @@ main {
 .btn-check:hover {
     background-color: #fff;
     color: #000;
+}
+
+.error {
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #ff0000;
 }

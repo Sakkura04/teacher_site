@@ -149,7 +149,7 @@ def get_lessons_by_teacher(user_id):
     try:
         cursor = connection.cursor(dictionary=True)
         query = """
-            SELECT l.less_id, l.teacher_id, l.less_name, l.stud_amount, l.stud_max, l.level, l.avg_grade, l.schedule, days_of_week, u.name, u.midname, u.surname, u.id
+            SELECT l.less_id, l.teacher_id, l.less_name, l.stud_amount, l.stud_max, l.level, l.avg_grade, l.schedule, l.days_of_week, u.name, u.midname, u.surname, u.id
             FROM lesson l
             INNER JOIN teacher t ON l.teacher_id = t.user_id
             INNER JOIN users u ON t.user_id = u.id
@@ -179,7 +179,11 @@ def calculate_avg(less_id):
             GROUP BY l.less_id
         """
         cursor.execute(query, (less_id,))
-        avg = cursor.fetchone()[0]
+        temp = cursor.fetchone()
+        if temp is not None:
+            avg = temp[0]
+        else:
+            avg = 0
         print(avg)# Отримання першого елемента кортежу
         query = """
             UPDATE lesson

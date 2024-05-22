@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block style_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/schedule.css') }}">
+{%endblock%}
+
+{% block main %}
+  <h1>Розклад по дням</h1>
+
+  <div class="schedule">
+    {% for day in days %}
+      <div class="day">
+        <h2>{{ day }}</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Назва уроку</th>
+              <th>Час</th>
+              <th>Рівень</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for lesson in grouped_schedule[day] %}
+              <tr>
+                <td>{{ lesson['less_name'] }}</td>
+                <td>{{ lesson['schedule'] }}</td>
+                <td>{{ lesson['level'] }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

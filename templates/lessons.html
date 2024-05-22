@@ -7,12 +7,16 @@
 {% block main %}
 <h2 class="centered-title">Знайдені Заняття</h2>
 {% if error %}
-   <p>{{ error }}</p>
+   <p class="error">{{ error }}</p>
 {% endif %}
 
 <!-- Сортування та фільтрація -->
 <div class="sort-filter-container">
+    {% if personal_list and created %}
+    <form method="GET" action="{{ url_for('show_lessons_teacher', teach_id=session['user_id']) }}">
+    {% else %}
     <form method="GET" action="{{ url_for('show_lessons') }}">
+    {% endif %}
         <label for="sort">Сортувати за:</label>
         <select name="sort" id="sort">
             <option value="places">Кількість лишившихся місць</option>
@@ -64,6 +68,7 @@
 
                             {% if lesson.stud_max == 1 %}
                                 <a class="btn-check" type="submit" href="/students/{{ lesson.less_id }}"> Переглянути індив </a>
+
                             {% else %}
                                 <a class="btn-check" type="submit" href="/students/{{ lesson.less_id }}"> Переглянути групу </a>
                             {% endif %}
