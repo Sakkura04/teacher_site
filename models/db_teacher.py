@@ -137,6 +137,7 @@ def update_teacher_info(name, surname, midname, email, education, level, start_w
                 WHERE id = %s
             """
             cursor.execute(query, (name, surname, midname, email, phone, user_id))
+        connection.commit()
         query = """
             UPDATE teacher
             SET education = %s, level = %s, start_work = %s

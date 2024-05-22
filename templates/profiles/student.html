@@ -47,7 +47,7 @@
                     <li><strong>Почав навчатися:</strong> <input required type="date" name="start_educ" value="{{ user.start_educ }}"></li>
                     <li><strong>Телефон:</strong> <input required type="tel" name="phone" value="{{ user.phone }}"></li>
                     <li style="display: none;"><input type="file" name="photo" id="hidden-photo"></li>
-                    <li><strong>Середня оцінка:</strong> {{ user.grade }}</li>
+                    <li><strong>Оцінка в групі:</strong> {{ user.grade }}</li>
                     <li><strong>Записаний на заняття:</strong> {{ user.less_name }}</li>
                 </ul>
                 <button style="margin-left: 5%" class="list-group-item" type="submit">Update</button>

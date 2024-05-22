@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 import mysql.connector
-from . import db_funcs
+from . import db_funcs, db_student
 
 
 def create_lesson_table():
@@ -27,7 +27,7 @@ def create_lesson_table():
                     avg_grade DECIMAL(5,2),
                     schedule DECIMAL(4,2),
                     days_of_week VARCHAR(255), 
-                    FOREIGN KEY (teacher_id) REFERENCES users(id)
+                    FOREIGN KEY (teacher_id) REFERENCES teacher(teach_id)
                 )
             """)
             print("Table 'lesson' created successfully.")
@@ -47,8 +47,6 @@ def create_lesson_table():
             cursor.close()
             connection.close()
             print("MySQL connection is closed.")
-
-
 
 
 def insert_lesson(user_id, less_name, stud_amount, stud_max, level, avg_grade, schedule, days_of_week):
@@ -114,7 +112,6 @@ def insert_lesson(user_id, less_name, stud_amount, stud_max, level, avg_grade, s
             return False
 
 
-
 def get_all_lessons():
     connection = db_funcs.get_db_connection()
     lessons = []
@@ -138,9 +135,6 @@ def get_all_lessons():
             connection.close()
             print("MySQL connection is closed.")
     return lessons
-
-
-
 
 
 def get_lessons_by_teacher(user_id):
@@ -181,10 +175,10 @@ def calculate_avg(less_id):
         cursor.execute(query, (less_id,))
         temp = cursor.fetchone()
         if temp is not None:
-            avg = cursor.fetchone()[0]
+            avg = temp[0]
         else:
             avg = 0
-        print(avg)# Отримання першого елемента кортежу
+        print(avg)  # Отримання першого елемента кортежу
         query = """
             UPDATE lesson
             SET avg_grade = %s
@@ -199,8 +193,6 @@ def calculate_avg(less_id):
             cursor.close()
             connection.close()
             print("MySQL connection is closed.")
-
-
 
 
 def remove_lesson(lesson_id):
@@ -224,6 +216,14 @@ def remove_lesson(lesson_id):
             cursor.execute("UPDATE teacher SET indiv_count = indiv_count - 1 WHERE user_id = %s", (teacher_id,))
         else:
             cursor.execute("UPDATE teacher SET group_count = group_count - 1 WHERE user_id = %s", (teacher_id,))
+        connection.commit()
+
+        # Від'єднання студентів від заняття
+        cursor.execute("SELECT user_id FROM student WHERE lesson_id = %s", (lesson_id,))
+        studs = cursor.fetchall()
+        if studs is not None:
+            for stud in studs:
+                db_student.retire(stud[0])
 
         # Видалення уроку
         cursor.execute("DELETE FROM lesson WHERE less_id = %s", (lesson_id,))
