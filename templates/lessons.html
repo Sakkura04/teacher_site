@@ -1,5 +1,7 @@
+{% extends 'base.html' %}
+
 {% block style_css %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/teachers.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/lessons.css') }}">
 {% endblock %}
 
 {% block main %}
@@ -10,7 +12,11 @@
 
 <!-- Сортування та фільтрація -->
 <div class="sort-filter-container">
+    {% if personal_list %}
+    <form method="GET" action="{{ url_for('show_lessons_teacher', teach_id=session['user_id']) }}">
+    {% else %}
     <form method="GET" action="{{ url_for('show_lessons') }}">
+    {% endif %}
         <label for="sort">Сортувати за:</label>
         <select name="sort" id="sort">
             <option value="places">Кількість лишившихся місць</option>
@@ -30,7 +36,7 @@
             <option value="C1">C1</option>
             <option value="C2">C2</option>
         </select>
-        <button type="submit">Застосувати</button>
+        <button class="btn-search" type="search">Застосувати</button>
     </form>
 </div>
 
@@ -47,31 +53,32 @@
                 <p><strong>Рівень навчання:</strong> {{ lesson.level }}</p>
                 <p><strong>Залишилося місць:</strong> {{ lesson.stud_max - lesson.stud_amount }}</p>
                 <p><strong>Середня оцінка:</strong> {{ lesson.avg_grade }}</p>
+                <p><strong>Дні:</strong> {{ lesson.days_of_week }}</p>
                 <p><strong>Час за розкладом:</strong> {{ lesson.schedule }}</p>
                 <p><strong>Викладач:</strong> <a href="/lessons/{{ lesson.id }}"> {{ lesson.name + " " + lesson.midname + " " + lesson.surname }} </a> </p>
                 {% if created %}
                     {% if lesson in created and session['role'] == 'teacher'%}
                         <form action="/remove/{{ lesson.less_id }}" accept-charset="UTF-8" method="post" enctype="multipart/form-data">
                             {% if lesson.stud_max == 1 %}
-                                <button class="list-group-item" type="submit"> Видалити індивідуальне заняття </button>
+                                <button class="btn" type="submit"> Видалити індивідуальне заняття </button>
                             {% else %}
-                                <button class="list-group-item" type="submit"> Видалити групу </button>
+                                <button class="btn" type="submit"> Видалити групу </button>
                             {% endif %}
                         </form>
 
                             {% if lesson.stud_max == 1 %}
-                                <a class="list-group-item" type="submit" href="/students/{{ lesson.less_id }}"> Переглянути індив </a>
+                                <a class="btn-check" type="submit" href="/students/{{ lesson.less_id }}"> Переглянути індивідуальне заняття </a>
                             {% else %}
-                                <a class="list-group-item" type="submit" href="/students/{{ lesson.less_id }}"> Переглянути групу </a>
+                                <a class="btn-check" type="submit" href="/students/{{ lesson.less_id }}"> Переглянути групу </a>
                             {% endif %}
                     {% endif %}
                 {% endif %}
                 {% if boolean %}
                     <form action="/enroll/{{ lesson.less_id }}" accept-charset="UTF-8" method="post" enctype="multipart/form-data">
                         {% if lesson.stud_max == 1 %}
-                            <button class="list-group-item" type="submit"> Записатися до індивідуальних занять </button>
+                            <button class="btn" type="submit"> Записатися до індивідуальних занять </button>
                         {% else %}
-                            <button class="list-group-item" type="submit"> Записатися до групи </button>
+                            <button class="btn" type="submit"> Записатися до групи </button>
                         {% endif %}
                     </form>
                 {% endif %}

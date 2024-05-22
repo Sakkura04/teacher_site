@@ -20,8 +20,19 @@ main {
 .row {
     width: 100%; /* Займає всю ширину батьківського елемента */
     overflow-x: auto; /* Додає горизонтальний скролінг */
-    white-space: nowrap; /* Запобігає перенесенню рядка */
 }
+
+.sort-filter-container {
+    text-align: center; /* Центрування вмісту */
+    font-size: 20px; /* Збільшення шрифту */
+    margin-bottom: 20px;
+}
+
+.sort-filter-container select{
+    border-radius: 15px;
+    height: 30px;
+}
+
 
 .container {
     display: inline-flex; /* Розміщує елементи контейнера в один рядок */
@@ -41,6 +52,7 @@ main {
     border-radius: 15px;
     width: 200px;
     background-color: #fff;
+    word-wrap: break-word;
 }
 
 /* Ліва та права колонки */
@@ -51,6 +63,7 @@ main {
 .right-column {
     width: 100%;
     text-align: left;
+    word-wrap: break-word;
 }
 
 .user-photo {
@@ -82,12 +95,56 @@ main {
     transition: background-color 0.3s;
 }
 
-.evaluation-form {
-    display: flex;
-    flex-direction: column;
+
+.btn:hover {
+    background-color: #fff;
+    color: #000;
 }
 
 
-.button-container {
-    align-self: flex-start; /* Забезпечує вирівнювання кнопки від лівого краю */
+.btn-search{
+    width: 7%;
+    height: 30px;
+    background-color: #96A86F;
+    border: none;
+    border-radius: 30px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 200;
+    align-self: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-search:hover {
+    background-color: #e6ffff;
+    color: #000;
+}
+
+
+.btn-check {
+    width: 165px;
+    height: 40px;
+    background-color: #c6cfaf;
+    border: none;
+    border-radius: 30px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 200;
+    align-self: center;
+    margin-top: 10px;
+    margin-right: 10px; /* Додано відступ зправа */
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: inline-block; /* Забезпечує вирівнювання по горизонталі */
+    text-align: center; /* Вирівнює текст по центру */
+    line-height: 40px; /* Забезпечує вертикальне центрування тексту */
+    flex-grow: 1; /* Забезпечує автоматичне розширення кнопок на всю доступну ширину */
+}
+
+.btn-check:hover {
+    background-color: #fff;
+    color: #000;
 }

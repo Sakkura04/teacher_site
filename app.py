@@ -283,6 +283,44 @@ def show_lessons():
 
     lessons = db_lesson.get_all_lessons()
 
+    created = None
+    boolean = False
+    personal_list = False
+    if 'logged' in session and session['role'] == 'teacher':
+        created = db_lesson.get_lessons_by_teacher(session['user_id'])
+
+    if 'logged' in session and session['role'] == 'student':
+        boolean = True
+
+    if level:
+        lessons = [lesson for lesson in lessons if lesson['level'] == level]
+        if created:
+            created = [create for create in created if create['level'] == level]
+
+    if sort == 'places':
+        lessons.sort(key=lambda x: x['stud_max'] - x['stud_amount'], reverse=True)
+        if created:
+            created.sort(key=lambda x: x['stud_max'] - x['stud_amount'], reverse=True)
+    elif sort == 'schedule':
+        lessons.sort(key=lambda x: x['schedule'])
+        if created:
+            created.sort(key=lambda x: x['schedule'])
+
+    return render_template('lessons.html', lessons=lessons, created=created, boolean=boolean, personal_list=personal_list)
+
+
+@app.route('/lessons/<int:teach_id>')
+def show_lessons_teacher(teach_id):
+    sort = request.args.get('sort')
+    level = request.args.get('level')
+
+    lessons = db_lesson.get_lessons_by_teacher(teach_id)
+
+    boolean = False
+    personal_list = True
+    if 'logged' in session and session['role'] == 'student':
+        boolean = True
+
     if level:
         lessons = [lesson for lesson in lessons if lesson['level'] == level]
 
@@ -291,23 +329,7 @@ def show_lessons():
     elif sort == 'schedule':
         lessons.sort(key=lambda x: x['schedule'])
 
-    created = None
-    boolean = False
-    if 'logged' in session and session['role'] == 'teacher':
-        created = db_lesson.get_lessons_by_teacher(session['user_id'])
-    if 'logged' in session and session['role'] == 'student':
-        boolean = True
-
-    return render_template('lessons.html', lessons=lessons, created=created, boolean=boolean)
-
-
-@app.route('/lessons/<int:teach_id>')
-def show_lessons_teacher(teach_id):
-    lessons = db_lesson.get_lessons_by_teacher(teach_id)
-    boolean = False
-    if 'logged' in session and session['role'] == 'student':
-        boolean = True
-    return render_template('lessons.html', lessons=lessons, created=lessons, boolean=boolean)
+    return render_template('lessons.html', lessons=lessons, created=lessons, boolean=boolean, personal_list=personal_list)
 
 
 
@@ -422,6 +444,7 @@ from flask import request
 def articles():
     if not db_funcs.table_exists('articles'):
         db_articles.create_articles_table()
+        db_articles.create_likes_table()
 
     if request.method == 'POST':
         if 'logged' in session and session['role'] == 'teacher':
@@ -484,6 +507,24 @@ def filtered_articles():
     return render_template('articles.html', articles=filtered_articles)
 
 
+@app.route('/schedule')
+def schedule():
+    # Отримання розкладу з бази даних
+    schedule = db_teacher.get_schedule()
+
+    # Групування розкладу по днях
+    grouped_schedule = {}
+    for lesson in schedule:
+        day = lesson['days_of_week']
+        if day not in grouped_schedule:
+            grouped_schedule[day] = []
+        grouped_schedule[day].append(lesson)
+
+    # Сортування розкладу в кожному дні за часом
+    for day in grouped_schedule:
+        grouped_schedule[day] = sorted(grouped_schedule[day], key=lambda x: x['schedule'])
+
+    return render_template('schedule.html', grouped_schedule=grouped_schedule)
 
 
 @app.context_processor

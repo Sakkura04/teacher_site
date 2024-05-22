@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Розклад по дням</h1>
+
+  <div class="schedule">
+    {% for day, lessons in grouped_schedule.items() %}
+      <div class="day">
+        <h2>{{ day }}</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Назва уроку</th>
+              <th>Час</th>
+              <th>Викладач</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for lesson in lessons %}
+              <tr>
+                <td>{{ lesson.less_name }}</td>
+                <td>{{ lesson.schedule }}</td>
+                <td>{{ lesson.teacher_name }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

@@ -151,3 +151,26 @@ def update_teacher_info(name, surname, midname, email, education, level, start_w
             cursor.close()
             connection.close()
             print("MySQL connection is closed.")
+
+
+def get_schedule():
+    connection = db_funcs.get_db_connection()
+    schedule = []
+    try:
+        cursor = connection.cursor(dictionary=True)
+        query = """
+            SELECT l.less_id, l.less_name, l.schedule, t.name AS teacher_name, l.days_of_week
+            FROM lesson l
+            INNER JOIN teacher te ON l.teacher_id = te.teach_id
+            INNER JOIN users t ON te.user_id = t.id
+        """
+        cursor.execute(query)
+        schedule = cursor.fetchall()
+    except mysql.connector.Error as error:
+        print("Error fetching schedule:", error)
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            print("MySQL connection is closed.")
+    return schedule
