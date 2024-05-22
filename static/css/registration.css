@@ -111,6 +111,7 @@ footer {
     margin: 0 auto; /* Центрування контейнера по горизонталі */
     margin-bottom: 15px;
     margin-top: 15px;
+    font-size: 20px;
 
     position: relative; /* Позиціонуємо відносно батьківського елемента */
     z-index: 2; /* Над розмитим зображенням */
@@ -171,10 +172,11 @@ footer {
 
 
 .input-field {
-    width: 300px; /* Ширина поля */
+    width: 80%; /* Ширина поля */
     border-radius: 10px; /* Закруглені вугли поля */
     padding: 10px; /* Відступ від країв поля */
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+    margin-top 20px;
 }
 
 

@@ -12,8 +12,8 @@ main {
 
 /* Контейнер */
 .container {
+    height: fit-content;
     display: flex;
-    height: 80vh;
     width: 100%; /* Займає всю ширину */
 }
 
@@ -59,22 +59,21 @@ main {
     justify-content: space-between; /* Розмістити елементи в одному рядку і рівномірно розподілити простір між ними */
     align-items: center; /* Центрувати по вертикалі */
     margin: 60px;
-    padding: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 5px;
     width: 70%; /* Займає 70% ширини батьківського контейнера */
-    height: 85%;
+    height: fit-content;
     background-color: #fff;
 }
 
 /* Ліва та права колонки */
 
 .right-column {
-    width: 30%;
+    width: 40%;
 }
 
 .left-column {
-    width: 70%;
+    width: 50%;
     margin-right: 4%; /* Відступ між колонками */
 }
 
@@ -90,8 +89,12 @@ main {
 }
 
 .column ul li {
-    padding: 20px;
+    padding: 10px;
     border-bottom: 1px solid #ddd;
+}
+
+.column ul li input {
+    border-radius: 5px;
 }
 
 .column ul li strong {

@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% from . import db_funcs %}
 
 {% block style_css %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/teachers.css') }}">
@@ -15,7 +14,7 @@
                 {% if student.photo %}
                     <img class="user-photo"  src="{{ url_for('static', filename='uploads/' + student.photo) }}" alt="User Photo">
                 {% else %}
-                    <img class="user-photo"  src="{{ url_for('static', filename='uploads/default_photo.jpg') }}" alt="Default Photo">
+                    <img class="user-photo"  src="{{ url_for('static', filename='default.png') }}" alt="Default Photo">
                 {% endif %}
             </div>
 
@@ -25,13 +24,11 @@
                 <p><strong>Рівень:</strong> {{ student.level }}</p>
                 <p><strong>Оцінка:</strong> {{ student.grade }}</p>
                 <p><strong>Група:</strong> {{ student.less_name }}</p>
-                {% if enrolled %}
-                    {% if student in enrolled %}
+                {% if session['role']== 'teacher' %}
                         <form action="/evaluate/{{ student.id }}" accept-charset="UTF-8" method="post" enctype="multipart/form-data">
                             <input required type="number" name="grade" id="grade" placeholder="Нова оцінка" class="input-field">
                             <button class="list-group-item" type="submit">Поставити нову оцінку студенту</button>
                         </form>
-                    {% endif %}
                 {% endif %}
             </div>
         </div>

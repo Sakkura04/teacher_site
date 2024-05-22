@@ -210,7 +210,7 @@ def evaluate_grade(user_id, grade):
         cursor = connection.cursor()
         query = """
             UPDATE student
-            SET grade = %s,
+            SET grade = %s
             WHERE user_id = %s
         """
         cursor.execute(query, (grade, user_id))
@@ -223,7 +223,7 @@ def evaluate_grade(user_id, grade):
             WHERE s.user_id = %s
         """
         cursor.execute(query, (user_id,))
-        less_id = cursor.fetchone()
+        less_id = cursor.fetchone()[0]
     except mysql.connector.Error as error:
         print("Error updating student grade:", error)
     finally:
@@ -245,7 +245,7 @@ def enroll(user_id, less_id):
         """
         cursor.execute(query, (user_id,))
         ident = cursor.fetchone()
-        if ident is not None:
+        if ident[0] is not None:
             return "Already enrolled."
         query = """
             SELECT level
@@ -270,7 +270,7 @@ def enroll(user_id, less_id):
         """
         cursor.execute(query, (less_id,))
         free = cursor.fetchone()
-        if free <= 0:
+        if free[0] <= 0:
             return "No place left."
         query = """
             UPDATE student
@@ -307,15 +307,15 @@ def retire(user_id):
             WHERE s.user_id = %s
         """
         cursor.execute(query, (user_id,))
-        lesson_id = cursor.fetchone()
+        lesson_id = cursor.fetchone()[0]
         if lesson_id is None:
-            return
+            return -1
         query = """
             UPDATE student
-            SET lesson_id = None, grade = 0
+            SET lesson_id = %s, grade = %s
             WHERE user_id = %s
         """
-        cursor.execute(query, (user_id,))
+        cursor.execute(query, (None, 0, user_id,))
         connection.commit()
         query = """
             UPDATE lesson

@@ -16,7 +16,15 @@
             </a>
         </div>
         <div class="header-right">
-            <a href="#">Join us!  </a>
+            <div class="dropdown">
+                <a href="#" class="dropbtn">What's up?</a>
+                <div class="dropdown-content">
+                    <a href="/joins">Why us?</a>
+                    <a href="/teachers">Our teachers</a>
+                    <a href="/more_bout_learning">About learning</a>
+                    <a href="/questions">Your questions</a>
+                </div>
+            </div>
             <a href="/articles">Articles  </a>
             {% if is_authenticated %}
                 {% if session['role'] == 'teacher' %}
@@ -26,8 +34,13 @@
                 {% endif %}
                 <a href="/sign_out">Log out </a>
             {% else %}
-                <a href="/register_teacher">Register as a teacher </a>
-                <a href="/register_student">Register as a student </a>
+                <div class="dropdown">
+                    <a href="#" class="dropbtn">Sign up!</a>
+                    <div class="dropdown-content">
+                        <a href="/teacher_code">As a teacher </a>
+                        <a href="/register_student">As a student </a>
+                    </div>
+                </div>
             {% endif %}
         </div>
     </header>

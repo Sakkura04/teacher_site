@@ -5,7 +5,7 @@ def get_db_connection():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="root",
+        password="Vladasql2004",
         database="teachSiteDb"
     )
 
@@ -96,7 +96,12 @@ def insert_table(name, surname, midname, email, phone, password, photo_path):
 # ///////////////////
 #to get data from users table
 def is_in_table(email, password):
-    connection = get_db_connection()
+    connection = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="Vladasql2004",
+        database="teachSiteDb"
+    )
     try:
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM users WHERE email = %s AND password = %s", (email, password))
@@ -104,14 +109,11 @@ def is_in_table(email, password):
 
         if user:
             user_id = user[0]  # Припускаємо, що user_id є першим полем в таблиці `users`
-            print(user_id)
 
             # Перевіряємо, чи є запис в таблиці `teacher` для цього користувача
-            cursor.execute("SELECT id FROM teacher WHERE user_id = %s", (user_id,))
+            cursor.execute("SELECT teach_id FROM teacher WHERE user_id = %s", (user_id,))
             teacher = cursor.fetchone()
-            print(teacher)
 
-            # Якщо є запис у таблиці `teacher`, встановлюємо роль як 'teacher'
             if teacher:
                 role = 'teacher'
             else:
@@ -122,7 +124,6 @@ def is_in_table(email, password):
             connection.close()
 
             return {'logged_in': True, 'user_id': user_id, 'role': role}
-
         # Якщо користувача не знайдено, повертаємо відповідний результат
         cursor.close()
         connection.close()

@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from fileinput import filename
 from werkzeug.utils import secure_filename
-from models import db_teacher, db_student, db_funcs, db_lesson
+from models import db_teacher, db_student, db_funcs, db_lesson, db_articles
 from keyy import secret_key
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_session import Session
@@ -93,42 +93,37 @@ def register_teacher():
         db_student.create_student_table()
 
     if request.method == 'POST':
-        secret_code = request.form['secret_code']
-        if not secret_code == TEACHER_SECRET_CODE:
-            error = "Incorrect teacher code. Please try again."
-            return render_template('register_teacher.html', error=error)
-        else:
-            name = request.form['name']
-            surname = request.form['surname']
-            midname = request.form['midname']
-            email = request.form['email']
-            phone = request.form['phone']
-            password = request.form['password']
-            education = request.form['education']
-            group_count = 0
-            indiv_count = 0
-            level = request.form['level']
-            start_work = request.form['start_work']
+        name = request.form['name']
+        surname = request.form['surname']
+        midname = request.form['midname']
+        email = request.form['email']
+        phone = request.form['phone']
+        password = request.form['password']
+        education = request.form['education']
+        group_count = 0
+        indiv_count = 0
+        level = request.form['level']
+        start_work = request.form['start_work']
 
-            if 'file' not in request.files:
-                return "No photo part"
-            file = request.files['file']
-            if file.filename == '':
-                return "No selected photo"
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file_path = filename
-                file_path_save = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                file.save(file_path_save)
-                file.save(file_path)
+        if 'file' not in request.files:
+           return "No photo part"
+        file = request.files['file']
+        if file.filename == '':
+            return "No selected photo"
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file_path = filename
+            file_path_save = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path_save)
+            file.save(file_path)
 
                 # Зберігаємо дані користувача у базі даних
-                user_id = db_teacher.insert_user_and_teacher(name, surname, midname, email, phone, password, file_path,
-                                                             education, group_count, indiv_count, level, start_work)
-            session['logged'] = True
-            session['role'] = 'teacher'
-            session['user_id'] = user_id
-            return redirect(url_for('index'))
+            user_id = db_teacher.insert_user_and_teacher(name, surname, midname, email, phone, password, file_path,
+                                                        education, group_count, indiv_count, level, start_work)
+        session['logged'] = True
+        session['role'] = 'teacher'
+        session['user_id'] = user_id
+        return redirect(url_for('index'))
 
     return render_template('register_teacher.html')
 
@@ -161,21 +156,19 @@ def register_student():
         grade = 0
         level = request.form['level']
         start_educ = request.form['start_educ']
+        file_path = ''
+        if 'file' in request.files:
+            file = request.files['file']
+            # if file.filename == '':
+            #     return "No selected photo"
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                file_path = filename
+                file_path_save = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(file_path_save)
+                file.save(file_path)
 
-        if 'file' not in request.files:
-            return "No photo part"
-        file = request.files['file']
-        if file.filename == '':
-            return "No selected photo"
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file_path = filename
-            file_path_save = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(file_path_save)
-            file.save(file_path)
-
-            # Зберігаємо дані користувача у базі даних
-            user_id = db_student.insert_user_and_student(name, surname, midname, email, phone, password, file_path,
+        user_id = db_student.insert_user_and_student(name, surname, midname, email, phone, password, file_path,
                                                          lesson_id, grade, level, start_educ)
         session['logged'] = True
         session['role'] = 'student'
@@ -184,9 +177,9 @@ def register_student():
 
     return render_template('register_student.html')
 
-
 @app.route('/add_lesson', methods=['GET', 'POST'])
 def add_lesson():
+    db_lesson.create_lesson_table()
     if 'logged' not in session or session['role'] != 'teacher':
         return redirect(url_for('index'))
 
@@ -198,9 +191,12 @@ def add_lesson():
         level = request.form['level']
         avg_grade = 0
         schedule = request.form['schedule']
-        boolean = db_lesson.insert_lesson(teacher_id, less_name, stud_amount, stud_max, level, avg_grade, schedule)
-        if not boolean:
-            error = "Error during lesson creation."
+        days_of_week = request.form.getlist('days_of_week')  # Отримуємо список днів тижня
+        days_of_week_str = ",".join(days_of_week)  # Перетворюємо список у строку
+
+        success = db_lesson.insert_lesson(teacher_id, less_name, stud_amount, stud_max, level, avg_grade, schedule, days_of_week_str)
+        if not success:
+            error = "Error during lesson creation. There might be a schedule conflict."
             return render_template('add_lesson.html', error=error)
         return redirect(url_for('teacher_profile'))
 
@@ -209,20 +205,21 @@ def add_lesson():
 
 @app.route('/log_in', methods=['GET', 'POST'])
 def login():
-    if 'logged' in session:
-        return redirect(url_for('index'))
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
         user_data = db_funcs.is_in_table(email, password)
+
         if user_data['logged_in'] == True:
             session['logged'] = True
+            print(user_data['user_id'])
             session['user_id'] = user_data['user_id']
             session['role'] = user_data['role']
             return redirect(url_for('index'))
         else:
             error = "Invalid credentials"
             return render_template('log_in.html', error=error)
+
     return render_template('log_in.html')
 
 
@@ -281,13 +278,26 @@ def show_students_lesson(less_id):
 
 @app.route('/lessons')
 def show_lessons():
+    sort = request.args.get('sort')
+    level = request.args.get('level')
+
     lessons = db_lesson.get_all_lessons()
+
+    if level:
+        lessons = [lesson for lesson in lessons if lesson['level'] == level]
+
+    if sort == 'places':
+        lessons.sort(key=lambda x: x['stud_max'] - x['stud_amount'], reverse=True)
+    elif sort == 'schedule':
+        lessons.sort(key=lambda x: x['schedule'])
+
     created = None
+    boolean = False
     if 'logged' in session and session['role'] == 'teacher':
         created = db_lesson.get_lessons_by_teacher(session['user_id'])
-    boolean = False
     if 'logged' in session and session['role'] == 'student':
         boolean = True
+
     return render_template('lessons.html', lessons=lessons, created=created, boolean=boolean)
 
 
@@ -298,6 +308,22 @@ def show_lessons_teacher(teach_id):
     if 'logged' in session and session['role'] == 'student':
         boolean = True
     return render_template('lessons.html', lessons=lessons, created=lessons, boolean=boolean)
+
+
+
+
+@app.route('/remove/<int:lesson_id>', methods=['POST'])
+def remove_lesson_route(lesson_id):
+    if 'logged' not in session or session['role'] != 'teacher':
+        return redirect(url_for('index'))
+
+    success = db_lesson.remove_lesson(lesson_id)
+    if not success:
+        error = "Error during lesson removal."
+        return render_template('your_lessons.html', error=error)
+
+    # Після успішного видалення перенаправлення на сторінку вчителя
+    return redirect(url_for('teacher_profile'))
 
 
 @app.route('/update_teacher_info', methods=['POST'])
@@ -356,10 +382,13 @@ def evaluate(user_id):
         return redirect(url_for('index'))  # Redirect to index if user not logged in
     grade = request.form['grade']
     less_id = db_student.evaluate_grade(user_id, grade)
+    print(less_id)
+    print(type(less_id))
     db_lesson.calculate_avg(less_id)
+    return redirect(url_for('show_students_lesson', less_id=less_id))
 
 
-@app.route('/enroll/<int:less_id>')
+@app.route('/enroll/<int:less_id>', methods=['GET', 'POST'])
 def enroll(less_id):
     if 'logged' not in session or session['role'] != 'student':
         return redirect(url_for('index'))
@@ -369,8 +398,11 @@ def enroll(less_id):
         error = res
         lessons = db_lesson.get_all_lessons()
         return render_template('lessons.html', lessons=lessons, boolean=True, error=error)
+    print(less_id)
+    print(type(less_id))
     db_lesson.calculate_avg(less_id)
     return redirect(url_for('student_profile'))
+
 
 
 @app.route('/retire')
@@ -379,19 +411,79 @@ def retire():
         return redirect(url_for('index'))
     user_id = session['user_id']
     lesson_id = db_student.retire(user_id)
-    db_lesson.calculate_avg(lesson_id)
+    if lesson_id != -1:
+        db_lesson.calculate_avg(lesson_id)
     return redirect(url_for('student_profile'))
 
 
-@app.route('/remove/<int:less_id>')
-def remove(less_id):
-    if 'logged' not in session or session['role'] != 'teacher':
-        return redirect(url_for('index'))
-    user_id = session['user_id']
-    db_lesson.remove(user_id, less_id)
-    lessons = db_lesson.get_all_lessons()
-    created = db_lesson.get_lessons_by_teacher(user_id)
-    return render_template('lessons.html', lessons=lessons, created=created, boolean=False)
+from flask import request
+
+@app.route('/articles', methods=['GET', 'POST'])
+def articles():
+    if not db_funcs.table_exists('articles'):
+        db_articles.create_articles_table()
+
+    if request.method == 'POST':
+        if 'logged' in session and session['role'] == 'teacher':
+            title = request.form['title']
+            level = request.form['level']
+            content = request.form['content']
+            teacher_id = session['user_id']
+            db_articles.add_article(title, level, content, teacher_id)
+            return redirect(url_for('articles'))  # Перенаправлення на сторінку зі статтями після успішного додавання
+
+    articles = db_articles.get_all_articles()
+    return render_template('articles.html', articles=articles)
+
+
+
+@app.route('/like_article/<int:article_id>', methods=['POST'])
+def like_article_route(article_id):
+    if 'logged' in session and session['role'] == 'student':
+        db_articles.create_likes_table()
+        user_id = session['user_id']
+        db_articles.like_article(article_id, user_id)
+    return redirect(url_for('articles'))
+
+
+@app.route('/delete_article/<int:article_id>', methods=['POST'])
+def delete_article_route(article_id):
+    if 'logged' in session and session['role'] == 'teacher':
+        teacher_id = session['user_id']  # Assuming user_id is stored in session
+        db_articles.delete_article(article_id, teacher_id)
+    return redirect(url_for('articles'))
+
+
+@app.route('/update_article/<int:article_id>', methods=['GET', 'POST'])
+def update_article_route(article_id):
+    if request.method == 'GET':
+        # Відображення форми оновлення статті з наявними даними
+        article = db_articles.get_article_by_id(article_id)
+        return render_template('update_article.html', article=article)
+    elif request.method == 'POST':
+        # Оновлення статті за допомогою даних з форми
+        title = request.form['title']
+        level = request.form['level']
+        content = request.form['content']
+        db_articles.update_article(article_id, title, level, content)
+        return redirect(url_for('articles'))
+
+
+@app.route('/filtered_articles', methods=['POST'])
+def filtered_articles():
+    selected_levels = []
+    for level in ['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'Всі']:
+        if request.form.get('Всі'):
+            articles = db_articles.get_all_articles()
+            return render_template('articles.html', articles=articles)
+
+        elif request.form.get(f'level_{level.lower()}'):
+            selected_levels.append(level)
+
+    filtered_articles = db_articles.get_articles_by_level(selected_levels)
+    return render_template('articles.html', articles=filtered_articles)
+
+
 
 
 @app.context_processor

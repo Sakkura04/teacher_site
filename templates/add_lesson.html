@@ -8,7 +8,7 @@
 <div class="background-image">
     <div class="background-overlay"></div> <!-- Додали оверлей для затемнення -->
         <div class="container-sign">
-           <h2>Lesson Creation</h2>
+           <h2 style="margin-bottom:20px" >Lesson Creation</h2>
            <div class="registration-form">
                {% if error %}
                    <p>{{ error }}</p>
@@ -37,8 +37,16 @@
                       <option value="13.40">13.40</option>
                       <option value="15.20">15.20</option>
                       <option value="17.00">17.00</option>
-                  </select>
-                  <input type="submit" name="commit" value="Register" class="btn" data-disable-with="Sign up">
+                  </select><br>
+                   <label for="days_of_week" id="days_of_week">Days of Week:</label><br><br>
+                    Monday<input type="checkbox" name="days_of_week" value="Monday">
+                    Tuesday<input type="checkbox" name="days_of_week" value="Tuesday">
+                    Wednesday<input type="checkbox" name="days_of_week" value="Wednesday"><br><br>
+                    Thursday<input type="checkbox" name="days_of_week" value="Thursday">
+                    Friday<input type="checkbox" name="days_of_week" value="Friday">
+                    Saturday<input type="checkbox" name="days_of_week" value="Saturday">
+                    Sunday<input type="checkbox" name="days_of_week" value="Sunday">
+                  <input style="margin-top:20px" type="submit" name="commit" value="Register" class="btn" data-disable-with="Sign up">
                 </form>
           </div>
         </div>

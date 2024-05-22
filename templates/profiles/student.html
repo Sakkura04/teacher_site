@@ -21,7 +21,6 @@
 
     <div class="column">
         <div class="left-column">
-            <h3>Інформація про студента</h3>
             <form action="/update_student_info" accept-charset="UTF-8" method="post" enctype="multipart/form-data">
                 <ul>
                     <li><strong>Ім'я:</strong> <input required type="text" name="name" value="{{ user.name }}"></li>
@@ -47,12 +46,16 @@
                     <li><strong>Середня оцінка:</strong> {{ user.grade }}</li>
                     <li><strong>Записаний на заняття:</strong> {{ user.less_name }}</li>
                 </ul>
-                <button class="list-group-item" type="submit">Update</button>
+                <button style="margin-left: 5%" class="list-group-item" type="submit">Update</button>
             </form>
         </div>
 
         <div class="right-column">
-            <img class="user-photo" src="{{ url_for('static', filename='uploads/' + user.photo) }}" alt="User Photo">
+            {% if user.photo %}
+                <img class="user-photo" src="{{ url_for('static', filename='uploads/' + user.photo) }}" alt="User Photo">
+            {% else %}
+                <img class="user-photo" src="{{ url_for('static', filename='default.png') }}" alt="Default Photo">
+            {% endif %}
             <label for="photo"><strong>Змінити фото:</strong></label>
             <input type="file" name="photo" id="photo" onchange="syncPhotoInput()">
         </div>

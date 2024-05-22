@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block style_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/articles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/registration.css') }}">
+{% endblock %}
+
+{% block main %}
+<div class="container">
+    <h2>Оновити статтю</h2>
+    <form action="{{ url_for('update_article_route', article_id=article.id) }}" method="post">
+        <div class="form-group">
+            <label for="title">Назва</label>
+            <input type="text" name="title" id="title" class="form-control" value="{{ article.title }}" required>
+        </div>
+        <div class="form-group">
+            <label for="level">Рівень</label>
+            <input type="text" name="level" id="level" class="form-control" value="{{ article.level }}" required>
+        </div>
+        <div class="form-group">
+            <label for="content">Зміст</label>
+            <textarea name="content" id="content" class="form-control" rows="5" required>{{ article.content }}</textarea>
+        </div>
+        <div class="button-group">
+            <button type="submit" class="btn btn-primary">Опублікувати</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
