@@ -1,6 +1,5 @@
 import mysql.connector
 from flask import session
-
 def get_db_connection():
     return mysql.connector.connect(
         host="localhost",
@@ -8,6 +7,7 @@ def get_db_connection():
         password="Vladasql2004",
         database="teachSiteDb"
     )
+
 
 def create_user_table():
     connection = get_db_connection()

@@ -35,12 +35,11 @@ main {
     flex-direction: column;
     justify-content: space-between; /* Розміщує елементи у вертикальному напрямку */
     align-items: center; /* Центрування по горизонталі */
-    margin: 0 10px; /* Відступ між колонками */
+    margin: 0 20px; /* Відступ між колонками */
     padding: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 15px;
-    width: 300px; /* Фіксована ширина для кожної колонки */
-    height: 70%;
+    width: 200px;
     background-color: #fff;
 }
 
@@ -81,4 +80,14 @@ main {
     margin-top: 10px;
     cursor: pointer;
     transition: background-color 0.3s;
+}
+
+.evaluation-form {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.button-container {
+    align-self: flex-start; /* Забезпечує вирівнювання кнопки від лівого краю */
 }

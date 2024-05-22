@@ -422,6 +422,7 @@ from flask import request
 def articles():
     if not db_funcs.table_exists('articles'):
         db_articles.create_articles_table()
+        db_articles.create_likes_table()
 
     if request.method == 'POST':
         if 'logged' in session and session['role'] == 'teacher':
@@ -482,6 +483,26 @@ def filtered_articles():
 
     filtered_articles = db_articles.get_articles_by_level(selected_levels)
     return render_template('articles.html', articles=filtered_articles)
+
+
+@app.route('/schedule')
+def schedule():
+    # Отримання розкладу з бази даних
+    schedule = db_teacher.get_schedule()
+
+    # Групування розкладу по днях
+    grouped_schedule = {}
+    for lesson in schedule:
+        day = lesson['days_of_week']
+        if day not in grouped_schedule:
+            grouped_schedule[day] = []
+        grouped_schedule[day].append(lesson)
+
+    # Сортування розкладу в кожному дні за часом
+    for day in grouped_schedule:
+        grouped_schedule[day] = sorted(grouped_schedule[day], key=lambda x: x['schedule'])
+
+    return render_template('schedule.html', grouped_schedule=grouped_schedule)
 
 
 
