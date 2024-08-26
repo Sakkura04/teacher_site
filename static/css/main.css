@@ -1,18 +1,38 @@
 body {
-    background-color: #E2E9D2;
+    background-color: #fffdfe;
     margin: 0;
     padding: 0;
 }
 
-header {
+header{
+    padding: 0.5% 10% 1% 10%;
+    margin: 0 auto;
+    top: 0px; /* Позиція по вертикалі (від верху сторінки) */
+    z-index: 1000; /* Забезпечує, що заголовок буде над іншими елементами */
+    background-color: #fffdfe;
+    position: sticky;
+    transition: opacity 1s ease; /* Додаємо плавний перехід для зникання */
+    opacity: 1; /* Спочатку повністю видно */
+}
+
+header.hidden {
+    opacity: 0; /* Зникає при додаванні класу hidden */
+}
+
+
+.top-line-content{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px;
+    border-bottom: 1px solid;
+    box-sizing: border-box;
+    height: 90px;
+    width: 100%;
 }
 
+
 .header-left h1, a {
-    margin: 0;
+    margin: 15px;
     text-decoration: none; /* Remove underlining */
     color: black;
 }
@@ -24,12 +44,16 @@ header {
     font-size: 25px;
 }
 
-.black-line {
-    width: 97%;
-    height: 2px;
-    background-color: black;
-    margin: 0 15px; /* відступи по 20px зліва і зправа */
+.line-content {
+    border-bottom: 1px solid;
+    font-size: 25px;
+    padding: 1% 0% 1% 0%;
 }
+
+.line-content a {
+    margin: 0 15px; /* Відступ зліва і справа між посиланнями */
+}
+
 
 main {
     padding: 20px;
@@ -40,116 +64,21 @@ main {
 }
 
 
-
-.main-image {
-    width: 105%;
-    margin-bottom: 0px;
-}
-
-.about-us {
-    display: flex;
-    align-items: center;
-    margin-top: 0px;
-}
-
-.about-us h2 {
-    width: 20%;
-    font-size: 40px;
-    margin-left: 15px;
-    color: #89AC29;
-}
-
-.about-us p {
-    font-size: 25px;
-    margin-right: 15px;
-}
-
-.text-block1, .text-block2 {
-    padding: 20px 30px ;
-    font-size: 20px;
-    width: 800px;
-    margin: 30px auto; /* Центрування контейнера */
-}
-
-.text-block2 {
-    width: 900px;
-    background-color: #C7D79D;
-    border-radius: 30px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Додає тінь */
-    transition: background-color 0.2s ease; /* Додає анімацію зміни кольору */
-}
-
-
-.text-block2:hover {
-    background-color: #71a374; /* Молочний колір при наведенні */
-    transform: translateY(-3px); /* Підняття картинки на 5px при наведенні курсора */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Додати світлу тінь при наведенні курсора */
-}
-
-
-.links {
-    text-align: center;
-    width: 100%;
-    margin-top: 40px;
-}
-
-.links a {
-    display: inline-block;
-    margin-right: 40px;
-    font-family: "Lucida Console", Courier, monospace;
-    position: relative; /* Для позиціонування тіні */
-}
-
-.links a img {
-    margin-top 50px;
-    width: 220px;
-    height: 200px;
-    transition: transform 0.2s, box-shadow 0.2s; /* Плавний перехід для трансформації і тіні */
-}
-
-.links a:hover img {
-    transform: translateY(-8px); /* Підняття картинки на 5px при наведенні курсора */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Додати світлу тінь при наведенні курсора */
-}
-
-
-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-}
-
-.footer-left img {
-    display: flex;
-    align-items: center;
-    width: 200px; /* Adjust size as needed */
-}
-
-.footer-center h2 {
-    margin: 0;
-}
-
-.footer-right p {
-    margin: 0 10px;
-    font-size: 20px;
-}
-
-
 .dropdown {
     position: relative;
     display: inline-block;
 }
 
 .dropbtn {
-    background-color: #E2E9D2;
+    background-color: #1a020e;
     color: black;
-    padding: 14px;
+    padding: 10px;
     font-size: 16px;
     border: none;
-    border-radius: 15px;
+    border-radius: 5px;
     cursor: pointer;
     text-decoration: none;
+    color: #fffdfe;
 }
 
 .dropbtn:hover, .dropbtn:focus {
@@ -170,6 +99,13 @@ footer {
     padding: 12px 16px;
     text-decoration: none;
     display: block;
+    font-family: GTWalsheimPro, SansSerif, sans-serif, Arial, Verdana, Trebuchet MS;
+    font-size: 12px;
+    height: 100%;
+    letter-spacing: .75px;
+    line-height: 20px;
+    text-transform: uppercase;
+    white-space: nowrap;
 }
 
 .dropdown-content a:hover {
@@ -178,4 +114,130 @@ footer {
 
 .dropdown:hover .dropdown-content {
     display: block;
+}
+
+
+.main-image {
+    width: 105%;
+    margin-top: 1%;
+    margin-bottom: 1%;
+}
+
+.about-us {
+    display: inline-block;
+    align-items: center;
+    margin: 0 auto;
+    width: 80%;
+}
+
+.about-us h2 {
+    font-size: 40px;
+    font-family: 'VogueFont', Arial, sans-serif;
+}
+
+.about-us p {
+    font-size: 40px;
+    color: #53c68c;
+}
+
+.main-info{
+    text-align: center;
+    width: 100%;
+}
+
+
+.text-block1, .text-block2 {
+    font-size: 25px;
+    width: 80%;
+}
+
+.text-block1 {
+    padding: 1% 0% 5%;
+    margin: 0 auto;
+    text-align: left;
+    display: flex;
+    align-items: center; /* Вертикальне вирівнювання */
+}
+
+.text-block1 img {
+    height: 300px;
+    width: auto;
+    margin-right: 5%;
+}
+
+.text-block2 {
+    display: inline-block;
+    background-color:#b3e6cc;
+    border-radius: 30px;
+    margin: 0 20px 15px 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Додає тінь */
+    transition: background-color 0.2s ease; /* Додає анімацію зміни кольору */
+}
+
+
+.text-block2:hover {
+    background-color: #ecf9f2; /* Молочний колір при наведенні */
+    transform: translateY(-3px); /* Підняття картинки на 5px при наведенні курсора */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Додати світлу тінь при наведенні курсора */
+}
+
+
+.links {
+    text-align: center;
+    width: 100%;
+    margin-top: 5%;
+}
+
+.links a {
+    display: inline-block;
+    margin-right: 40px;
+    font-family: GTWalsheimPro, SansSerif, sans-serif, Arial, Verdana, Trebuchet MS;
+    position: relative; /* Для позиціонування тіні */
+}
+
+.links a img {
+    margin-top 50px;
+    width: 220px;
+    height: 200px;
+    transition: transform 0.2s, box-shadow 0.2s; /* Плавний перехід для трансформації і тіні */
+}
+
+.links a:hover img {
+    transform: translateY(-8px); /* Підняття картинки на 5px при наведенні курсора */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Додати світлу тінь при наведенні курсора */
+}
+
+
+footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid;
+    margin: 0 auto;
+    padding: 0.5% 5% 1% 5%;
+}
+
+.footer-left img {
+    display: flex;
+    align-items: center;
+    width: 200px; /* Adjust size as needed */
+}
+
+.footer-center h2 {
+    font-family: 'VogueFont', Arial, sans-serif;
+    margin: 0;
+}
+
+.footer-right p {
+    margin: 0 10px;
+    font-size: 20px;
+}
+
+
+
+@font-face {
+    font-family: 'VogueFont'; /* Назва шрифту */
+    src: url('../fonts/Vogue.ttf') format('truetype');
+    font-weight: regular;
+    font-style: normal;
 }

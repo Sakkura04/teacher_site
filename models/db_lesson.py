@@ -17,19 +17,19 @@ def create_lesson_table():
         if not result:
             # Якщо таблиця lesson ще не існує, створюємо її
             cursor.execute("""
-                CREATE TABLE lesson (
-                    less_id INT AUTO_INCREMENT PRIMARY KEY,
-                    teacher_id INT,
-                    less_name VARCHAR(255),
-                    stud_amount INT,
-                    stud_max INT,
-                    level VARCHAR(255),
-                    avg_grade DECIMAL(5,2),
-                    schedule DECIMAL(4,2),
-                    days_of_week VARCHAR(255), 
-                    FOREIGN KEY (teacher_id) REFERENCES teacher(teach_id)
-                )
-            """)
+                            CREATE TABLE lesson (
+                                less_id INT AUTO_INCREMENT PRIMARY KEY,
+                                teacher_id INT,
+                                less_name VARCHAR(255),
+                                stud_amount INT,
+                                stud_max INT,
+                                level VARCHAR(255),
+                                avg_grade DECIMAL(5,2),
+                                schedule DECIMAL(4,2),
+                                days_of_week VARCHAR(255), 
+                                FOREIGN KEY (teacher_id) REFERENCES users(id)
+                            )
+                        """)
             print("Table 'lesson' created successfully.")
         else:
             # Якщо таблиця вже існує, додаємо нове поле, якщо його ще немає
