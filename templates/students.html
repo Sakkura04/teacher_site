@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block style_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/teachers.css') }}">
+{% endblock %}
+
+{% block main %}
+<h2 class="centered-title">Знайдені Учні</h2>
+<div class="row">
+    <div class="container">
+        {% for student in students %}
+        <div class="column">
+            <div class="left-column">
+                {% if student.photo %}
+                    <img class="user-photo"  src="{{ url_for('static', filename='uploads/' + student.photo) }}" alt="User Photo">
+                {% else %}
+                    <img class="user-photo"  src="{{ url_for('static', filename='default.png') }}" alt="Default Photo">
+                {% endif %}
+            </div>
+
+            <div class="right-column">
+                <p><strong>Ім'я:</strong> {{ student.name }}</p>
+                <p><strong>Прізвище:</strong> {{ student.surname }}</p>
+                <p><strong>Рівень:</strong> {{ student.level }}</p>
+                <p><strong>Оцінка:</strong> {{ student.grade }}</p>
+                <p><strong>Група:</strong> {{ student.less_name }}</p>
+                {% if session['role']== 'teacher' %}
+                    <form action="/evaluate/{{ student.id }}" accept-charset="UTF-8" method="post" enctype="multipart/form-data" class="evaluation-form">
+                        <div class="input-container">
+                            <input required type="number" name="grade" id="grade" placeholder="Нова оцінка" class="input-field">
+                        </div>
+                        <div class="button-container">
+                            <button class="btn" type="submit">Оновити оцінку</button>
+                        </div>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

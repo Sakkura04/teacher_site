@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* Основний стиль для сторінки */
 main {
     font-family: "Lucida Console", Courier, monospace;
@@ -104,3 +105,114 @@ main {
     height: auto; /* Автоматична висота, щоб зберегти пропорції */
     object-fit: cover; /* Змінюємо розмір фотографії так, щоб вона повністю покривала контейнер, не зберігаючи пропорції */
 }
+=======
+/* Основний стиль для сторінки */
+main {
+    font-family: "Lucida Console", Courier, monospace;
+    background-color: #E2E9D2;
+    margin: 0;
+    padding: 0;
+    height: 100vh; /* Забезпечує повну висоту для контейнера */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Контейнер */
+.container {
+    height: fit-content;
+    display: flex;
+    width: 100%; /* Займає всю ширину */
+}
+
+/* Ліве меню */
+.col-md-3 {
+    width: 20%; /* Займає 20% ширини батьківського контейнера */
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 0; /* Прибрати відступ зліва */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.col-md-3 h3 {
+    padding: 10px 5px 0px 45px;
+}
+
+.list-group-item {
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    display: inline-block;
+    background-color: #f4f6ee;
+}
+
+.list-group-item a {
+    text-decoration: none;
+    color: #333;
+    display: block;
+}
+
+.list-group-item a:hover {
+    color: #007bff;
+}
+
+/* Права колонка */
+/* Головна колонка */
+.column {
+    display: flex;
+    justify-content: space-between; /* Розмістити елементи в одному рядку і рівномірно розподілити простір між ними */
+    align-items: center; /* Центрувати по вертикалі */
+    margin: 60px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    width: 70%; /* Займає 70% ширини батьківського контейнера */
+    height: fit-content;
+    background-color: #fff;
+}
+
+/* Ліва та права колонки */
+
+.right-column {
+    width: 40%;
+}
+
+.left-column {
+    width: 50%;
+    margin-right: 4%; /* Відступ між колонками */
+}
+
+
+.column h3 {
+    margin: 10px;
+}
+
+.column ul {
+    list-style-type: none;
+    padding: 0;
+    margin:30px;
+}
+
+.column ul li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.column ul li input {
+    border-radius: 5px;
+}
+
+.column ul li strong {
+    margin-right: 10px;
+}
+
+
+.user-photo {
+    max-width: 90%; /* Максимальна ширина фотографії */
+    height: auto; /* Автоматична висота, щоб зберегти пропорції */
+    object-fit: cover; /* Змінюємо розмір фотографії так, щоб вона повністю покривала контейнер, не зберігаючи пропорції */
+}
+>>>>>>> 1ee519eb85ca0861e25081f3605f7cc483ea5b3d

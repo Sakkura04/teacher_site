@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block style_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/registration.css') }}">
+{%endblock%}
+
+{% block main %}
+<div class="background-image">
+    <div class="background-overlay"></div> <!-- Додали оверлей для затемнення -->
+        <div class="container-sign">
+           <h2>Student Registration</h2>
+           <div class="registration-form">
+            <form class="new_user" id="new_user" action="/register_student" accept-charset="UTF-8" method="post" enctype=multipart/form-data>
+              <input required type="text"  name="name" id="user_name" placeholder="Ім'я" class="input-field">
+              <input required type="text"  name="surname" id="user_surname" placeholder="Прізвище" class="input-field">
+              <input required type="text"  name="midname" id="user_midname" placeholder="По батькові" class="input-field">
+              <input required type="email" name="email" id="user_email" placeholder="Email" class="input-field" value="">
+              <input required type="tel"   name="phone" id="user_phone" placeholder="Номер телефону" class="input-field">
+              <select required name="level" id="level" class="input-field">
+                <option value="">Рівень знання англ. мови</option>
+                <option value="A0">A0</option>
+                <option value="A1">A1</option>
+                <option value="A1+">A1+</option>
+                <option value="A2">A2</option>
+                <option value="A2+">A2+</option>
+                <option value="B1">B1</option>
+                <option value="B1+">B1+</option>
+                <option value="B2">B2</option>
+                <option value="C1">C1</option>
+                <option value="C2">C2</option>
+              </select>
+              <input required type="date" name="start_educ" id="start_educ" placeholder="Початок навчання" class="input-field">
+              <input type="file" name="file" id="user_file"  placeholder="Фотографія" class="input-field">
+              <input required type="password" name="password" id="user_password" placeholder="Пароль" class="input-field">
+              <input type="submit" name="commit" value="Register" class="btn" data-disable-with="Sign up">
+            </form>
+          </div>
+          <p>Do you have one? <a href="/log_in">Log in</a></p>
+        </div>
+    </div>
+</div>
+{%endblock%}

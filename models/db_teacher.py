@@ -16,7 +16,7 @@ def create_teacher_table():
             # Якщо таблиця teacher ще не існує, створюємо її
             cursor.execute("""
                 CREATE TABLE teacher (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    teach_id INT AUTO_INCREMENT PRIMARY KEY,
                     user_id INT,
                     education VARCHAR(255),
                     group_count INT,
@@ -40,8 +40,6 @@ def create_teacher_table():
             print("MySQL connection is closed.")
 
 
-
-
 def insert_teacher(user_id, education, group_count, indiv_count, level, start_work):
     connection = db_funcs.get_db_connection()
 
@@ -63,7 +61,9 @@ def insert_teacher(user_id, education, group_count, indiv_count, level, start_wo
 
 
 
-def insert_user_and_teacher(name, surname, midname, email, phone, password, photo, education, group_count, indiv_count, level, start_work):
+
+def insert_user_and_teacher(name, surname, midname, email, phone, password, photo, education, group_count, indiv_count,
+                            level, start_work):
     user_id = db_funcs.insert_table(name, surname, midname, email, phone, password, photo)
     if user_id:
         insert_teacher(user_id, education, group_count, indiv_count, level, start_work)
@@ -73,33 +73,30 @@ def insert_user_and_teacher(name, surname, midname, email, phone, password, phot
 
 
 
-
 ########ОТРИМАТИ ІНФОРМАЦІЮ З БД
 def get_teacher_info(user_id):
     connection = db_funcs.get_db_connection()
-
+    user_teacher_info = None
     try:
         cursor = connection.cursor(dictionary=True)
         query = """
-            SELECT u.*, t.education, t.group_count, t.indiv_count, t.level, t.start_work
+            SELECT u.*, t.teach_id, t.education, t.group_count, t.indiv_count, t.level, t.start_work
             FROM users u
             LEFT JOIN teacher t ON u.id = t.user_id
             WHERE u.id = %s
         """
         cursor.execute(query, (user_id,))
         user_teacher_info = cursor.fetchone()
-
-        return user_teacher_info
-
     except mysql.connector.Error as error:
         print("Error retrieving user and teacher info:", error)
         return None
-
     finally:
         if connection.is_connected():
             cursor.close()
             connection.close()
             print("MySQL connection is closed.")
+    return user_teacher_info
+
 
 
 ########      ALL THE TEACHERS
@@ -109,11 +106,10 @@ def get_all_teachers():
     try:
         cursor = connection.cursor(dictionary=True)
         query = """
-                    SELECT u.name, u.surname, u.photo, t.education, t.level
-                    FROM users u
-                    LEFT JOIN teacher t ON u.id = t.user_id
-                     WHERE t.user_id IS NOT NULL -- Перевірка наявності даних в таблиці teacher
-                 """
+            SELECT u.id, u.name, u.surname, u.photo, t.education, t.level
+            FROM users u
+            INNER JOIN teacher t ON u.id = t.user_id
+         """
         cursor.execute(query)
         teachers = cursor.fetchall()
     except mysql.connector.Error as error:
@@ -126,32 +122,64 @@ def get_all_teachers():
     return teachers
 
 
-
-def update_teacher_info(name, surname, midname, email, phone, user_id, photo_filename):
+def update_teacher_info(name, surname, midname, email, education, level, start_work, phone, user_id, photo_filename):
     # Update the database
     connection = db_funcs.get_db_connection()
     try:
         cursor = connection.cursor()
         if photo_filename:
             query = """
-                    UPDATE users
-                    SET name = %s, surname = %s, midname = %s, email = %s, phone = %s, photo = %s
-                    WHERE id = %s
-                """
+                UPDATE users
+                SET name = %s, surname = %s, midname = %s, email = %s, phone = %s, photo = %s
+                WHERE id = %s
+            """
             cursor.execute(query, (name, surname, midname, email, phone, photo_filename, user_id))
         else:
             query = """
-                    UPDATE users
-                    SET name = %s, surname = %s, midname = %s, email = %s, phone = %s
-                    WHERE id = %s
-                """
+                UPDATE users
+                SET name = %s, surname = %s, midname = %s, email = %s, phone = %s
+                WHERE id = %s
+            """
             cursor.execute(query, (name, surname, midname, email, phone, user_id))
         connection.commit()
+        query = """
+            UPDATE teacher
+            SET education = %s, level = %s, start_work = %s
+            WHERE user_id = %s
+        """
+        cursor.execute(query, (education, level, start_work, user_id))
+        connection.commit()
     except mysql.connector.Error as error:
-        print("Error updating user information:", error)
+        print("Error updating teacher information:", error)
     finally:
         if connection.is_connected():
             cursor.close()
             connection.close()
             print("MySQL connection is closed.")
 
+
+
+def get_schedule(user_id):
+    connection = db_funcs.get_db_connection()
+    schedule = []
+    try:
+        cursor = connection.cursor(dictionary=True)
+        query = """
+            SELECT l.less_id, l.less_name, l.schedule, l.days_of_week, l.level 
+            FROM lesson l
+            WHERE l.teacher_id = %s
+        """
+        cursor.execute(query, (user_id,))
+        schedule = cursor.fetchall()
+    except mysql.connector.Error as error:
+        print("Error fetching schedule:", error)
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            print("MySQL connection is closed.")
+
+    return schedule
+
+# INNER JOIN teacher t ON l.teacher_id = t.user_id
+#             INNER JOIN users u ON t.user_id = u.id

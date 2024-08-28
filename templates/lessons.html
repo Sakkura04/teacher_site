@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block style_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/lessons.css') }}">
+{% endblock %}
+
+{% block main %}
+<h2 class="centered-title">Знайдені Заняття</h2>
+{% if error %}
+   <p class="error">{{ error }}</p>
+{% endif %}
+
+<!-- Сортування та фільтрація -->
+<div class="sort-filter-container">
+    {% if personal_list and created %}
+    <form method="GET" action="{{ url_for('show_lessons_teacher', teach_id=session['user_id']) }}">
+    {% else %}
+    <form method="GET" action="{{ url_for('show_lessons') }}">
+    {% endif %}
+        <label for="sort">Сортувати за:</label>
+        <select name="sort" id="sort">
+            <option value="places">Кількість лишившихся місць</option>
+            <option value="schedule">Час за розкладом</option>
+        </select>
+        <label for="level">Рівень:</label>
+        <select name="level" id="level">
+            <option value="">Всі</option>
+            <option value="A0">A0</option>
+            <option value="A1">A1</option>
+            <option value="A1+">A1+</option>
+            <option value="A2">A2</option>
+            <option value="A2+">A2+</option>
+            <option value="B1">B1</option>
+            <option value="B1+">B1+</option>
+            <option value="B2">B2</option>
+            <option value="C1">C1</option>
+            <option value="C2">C2</option>
+        </select>
+        <button class="btn-search" type="search">Застосувати</button>
+    </form>
+</div>
+
+<div class="row">
+    <div class="container">
+        {% for lesson in lessons %}
+        <div class="column">
+            <div class="right-column">
+                {% if lesson.stud_max == 1 %}
+                    <p><strong>Індивідуальні заняття:</strong> {{ lesson.less_name }}</p>
+                {% else %}
+                    <p><strong>Група:</strong> {{ lesson.less_name }}</p>
+                {% endif %}
+                <p><strong>Рівень навчання:</strong> {{ lesson.level }}</p>
+                <p><strong>Залишилося місць:</strong> {{ lesson.stud_max - lesson.stud_amount }}</p>
+                <p><strong>Середня оцінка:</strong> {{ lesson.avg_grade }}</p>
+                <p><strong>Дні:</strong> {{ lesson.days_of_week }}</p>
+                <p><strong>Час за розкладом:</strong> {{ lesson.schedule }}</p>
+                <p><strong>Викладач:</strong> <a href="/lessons/{{ lesson.id }}"> {{ lesson.name + " " + lesson.midname + " " + lesson.surname }} </a> </p>
+                {% if created %}
+                    {% if lesson in created and session['role'] == 'teacher'%}
+                        <form action="/remove/{{ lesson.less_id }}" accept-charset="UTF-8" method="post" enctype="multipart/form-data">
+                            {% if lesson.stud_max == 1 %}
+                                <button class="btn" type="submit"> Видалити індивідуальне заняття </button>
+                            {% else %}
+                                <button class="btn" type="submit"> Видалити групу </button>
+                            {% endif %}
+                        </form>
+
+                            {% if lesson.stud_max == 1 %}
+                                <a class="btn-check" type="submit" href="/students/{{ lesson.less_id }}"> Переглянути індив </a>
+
+                            {% else %}
+                                <a class="btn-check" type="submit" href="/students/{{ lesson.less_id }}"> Переглянути групу </a>
+                            {% endif %}
+                    {% endif %}
+                {% endif %}
+                {% if boolean %}
+                    <form action="/enroll/{{ lesson.less_id }}" accept-charset="UTF-8" method="post" enctype="multipart/form-data">
+                        {% if lesson.stud_max == 1 %}
+                            <button class="btn" type="submit"> Записатися до індивідуальних занять </button>
+                        {% else %}
+                            <button class="btn" type="submit"> Записатися до групи </button>
+                        {% endif %}
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

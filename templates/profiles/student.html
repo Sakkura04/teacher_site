@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends 'base.html' %}
 
 {% block style_css %}
@@ -32,3 +33,85 @@
     </div>
 </div>
 {% endblock %}
+=======
+{% extends 'base.html' %}
+
+{% block style_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profiles.css') }}">
+{%endblock%}
+
+{% block main %}
+<div class="container">
+    <div class="col-md-3">
+        <h3>Меню</h3>
+        <ul class="list-group">
+            {% if user.less_id %}
+                <a class="list-group-item" href="/students/{{ user.less_id }}">Переглянути свою групу</a>
+                <a class="list-group-item" href="/retire">Від'єднатись від своєї групи</a>
+            {% else %}
+                <a class="list-group-item" href="/teachers">Знайти вчителя для запису</a>
+                <a class="list-group-item" href="/lessons">Знайти заняття та записатися</a>
+            {% endif %}
+        </ul>
+    </div>
+
+    <div class="column">
+        <div class="left-column">
+            <form action="/update_student_info" accept-charset="UTF-8" method="post" enctype="multipart/form-data">
+                <ul>
+                    <li><strong>Ім'я:</strong> <input required type="text" name="name" value="{{ user.name }}"></li>
+                    <li><strong>Прізвище:</strong> <input required type="text" name="surname" value="{{ user.surname }}"></li>
+                    <li><strong>По батькові:</strong> <input required type="text" name="midname" value="{{ user.midname }}"></li>
+                    <li><strong>Email:</strong> <input required type="email" name="email" value="{{ user.email }}"></li>
+                    {% if user.less_id %}
+                        <li><strong>Рівень знання англійської мови:</strong> {{ user.level }} </li>
+                    {% else %}
+                        <li><strong>Рівень знання англійської мови:</strong> <select required name="level">
+                            <option value="{{ user.level }}" selected>{{ user.level }}</option>
+                            <option value="A0">A0</option>
+                            <option value="A1">A1</option>
+                            <option value="A1+">A1+</option>
+                            <option value="A2">A2</option>
+                            <option value="A2+">A2+</option>
+                            <option value="B1">B1</option>
+                            <option value="B1+">B1+</option>
+                            <option value="B2">B2</option>
+                            <option value="C1">C1</option>
+                            <option value="C2">C2</option>
+                        </select></li>
+                    {% endif %}
+                    <li><strong>Почав навчатися:</strong> <input required type="date" name="start_educ" value="{{ user.start_educ }}"></li>
+                    <li><strong>Телефон:</strong> <input required type="tel" name="phone" value="{{ user.phone }}"></li>
+                    <li style="display: none;"><input type="file" name="photo" id="hidden-photo"></li>
+                    <li><strong>Середня оцінка:</strong> {{ user.grade }}</li>
+                    <li><strong>Записаний на заняття:</strong> {{ user.less_name }}</li>
+                </ul>
+                <button style="margin-left: 5%" class="list-group-item" type="submit">Update</button>
+            </form>
+        </div>
+
+        <div class="right-column">
+            {% if user.photo %}
+                <img class="user-photo" src="{{ url_for('static', filename='uploads/' + user.photo) }}" alt="User Photo">
+            {% else %}
+                <img class="user-photo" src="{{ url_for('static', filename='default.png') }}" alt="Default Photo">
+            {% endif %}
+            <br>
+            <label for="photo"><strong>Змінити фото:</strong></label>
+            <input type="file" name="photo" id="photo" onchange="syncPhotoInput()">
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function syncPhotoInput() {
+        var photoInput = document.getElementById('photo');
+        var hiddenPhotoInput = document.getElementById('hidden-photo');
+
+        // Copy selected file to the hidden input
+        hiddenPhotoInput.files = photoInput.files;
+    }
+</script>
+{% endblock %}
+>>>>>>> 1ee519eb85ca0861e25081f3605f7cc483ea5b3d
