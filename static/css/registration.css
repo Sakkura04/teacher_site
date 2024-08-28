@@ -141,12 +141,32 @@ footer {
 }
 
 
-.input-field {
+.password-container {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.input-field, .input-field-select {
+    padding-right: 40px;
     width: 80%; /* Ширина поля */
     border-radius: 10px; /* Закруглені вугли поля */
     padding: 10px; /* Відступ від країв поля */
     margin-bottom: 20px;
     margin-top 20px;
+}
+
+.input-field-select {
+     width: 85%; /* Задайте ширину для певних елементів */
+}
+
+.toggle-icon img{
+    position: absolute;
+    width: 8%;
+    top: 50%;
+    right: 10%;
+    transform: translateY(-75%);
+    cursor: pointer;
 }
 
 

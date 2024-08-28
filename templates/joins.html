@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block style_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/questions.css') }}">
+{% endblock %}
+
+{% block main %}
+
+<div class="container">
+    <h1>Why Choose Us?</h1>
+
+    <div class="content-section">
+        <div class="text-content">
+            <h2>Experienced Teachers</h2>
+            <p>Our teachers are certified professionals with years of experience in teaching English. They know how to make learning fun and effective for every student.</p>
+        </div>
+        <div class="photo">
+            <img src="static/studying.jpg" alt="Photo">
+        </div>
+    </div>
+
+    <div class="content-section">
+        <div class="photo">
+            <img src="static/studying.jpg" alt="Photo">
+        </div>
+        <div class="text-content">
+            <h2>Flexible Learning Options</h2>
+            <p>Study at your own pace from any location, whether you prefer one-on-one sessions or group classes. We offer a range of learning formats to suit your schedule.</p>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <div class="text-content">
+            <h2>Personalized Learning Plans</h2>
+            <p>Every student is unique, and we tailor our programs to meet your individual needs and goals. Whether you're a beginner or looking to polish your advanced skills, we have a course for you.</p>
+        </div>
+        <div class="photo">
+            <img src="static/studying.jpg" alt="Photo">
+        </div>
+    </div>
+
+    <div class="content-section">
+        <div class="photo">
+            <img src="static/studying.jpg" alt="Photo">
+        </div>
+        <div class="text-content">
+            <h2>Interactive Learning Environment</h2>
+            <p>Engage with the material in a way that best fits your learning style. From video lessons to interactive exercises, we make sure you stay motivated and active in your studies.</p>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <div class="text-content">
+            <h2>Proven Results</h2>
+            <p>We are proud of our students' achievements. Many of our learners have gone on to pass international exams, secure better job positions, or simply communicate more effectively in English.</p>
+        </div>
+        <div class="photo">
+            <img src="static/studying.jpg" alt="Photo">
+        </div>
+    </div>
+
+</div>
+{% endblock %}

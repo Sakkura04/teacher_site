@@ -137,7 +137,7 @@ main {
 
 .about-us p {
     font-size: 40px;
-    color: #53c68c;
+    color: #96A86F;
 }
 
 .main-info{
@@ -167,7 +167,7 @@ main {
 
 .text-block2 {
     display: inline-block;
-    background-color:#b3e6cc;
+    background-color:#E2E9D2;
     border-radius: 30px;
     margin: 0 20px 15px 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Додає тінь */

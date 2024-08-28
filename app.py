@@ -32,6 +32,14 @@ def allowed_file(filename):
 def index():
     return render_template('index.html')
 
+@app.route('/joins')
+def joins():
+    return render_template('joins.html')
+
+@app.route('/questions')
+def questions():
+    return render_template('questions.html')
+
 
 @app.route('/sign_up', methods=['GET', 'POST'])
 def registration():

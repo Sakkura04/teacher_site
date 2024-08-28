@@ -25,7 +25,7 @@
                 <p><strong>Оцінка:</strong> {{ student.grade }}</p>
                 <p><strong>Група:</strong> {{ student.less_name }}</p>
 
-                {% if  %}
+                {% if 'logged' in session and session['role'] == 'teacher' %}
                         <form action="/evaluate/{{ student.id }}" accept-charset="UTF-8" method="post" enctype="multipart/form-data" class="evaluation-form">
                             <div class="input-container">
                                 <input required type="number" name="grade" id="grade" placeholder="Нова оцінка" class="input-field">
@@ -34,7 +34,6 @@
                                 <button class="btn" type="submit">Оновити оцінку</button>
                             </div>
                         </form>
-                    {% endif %}
                 {% endif %}
             </div>
         </div>
