@@ -1,35 +1,3 @@
-
-{% extends 'base.html' %}
-
-{% block style_css %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/teachers.css') }}">
-{% endblock %}
-
-{% block main %}
-<h2 class="centered-title">Наші Вчителі</h2>
-<div class="row">
-<div class="container">
-    {% for teacher in teachers %}
-    <div class="column">
-        <div class="left-column">
-            {% if teacher.photo %}
-                <img class="user-photo"  src="{{ url_for('static', filename='uploads/' + teacher.photo) }}" alt="User Photo">
-            {% else %}
-                <img class="user-photo"  src="{{ url_for('static', filename='uploads/default_photo.jpg') }}" alt="Default Photo">
-            {% endif %}
-        </div>
-
-        <div class="right-column">
-            <p><strong>Ім'я:</strong> {{ teacher.name }}</p>
-            <p><strong>Прізвище:</strong> {{ teacher.surname }}</p>
-            <p><strong>Рівень:</strong> {{ teacher.level }}</p>
-            <p><strong>Освіта:</strong> {{ teacher.education }}</p>
-        </div>
-    </div>
-    {% endfor %}
-</div>
-</div>
-{% endblock %}
 {% extends 'base.html' %}
 
 {% block style_css %}

@@ -3,20 +3,6 @@ from flask import Flask, render_template, url_for, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from fileinput import filename
-
-from werkzeug.utils import secure_filename
-
-from models import db_teacher, db_funcs, db_articles
-from keyy import secret_key
-from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
-# Секретний код для реєстрації вчителя
-from teacher_secret_code import TEACHER_SECRET_CODE
-
-app = Flask(__name__)
-app.secret_key = secret_key
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
-
-app.config['UPLOAD_FOLDER'] = 'static/uploads/'
 from werkzeug.utils import secure_filename
 from models import db_teacher, db_student, db_funcs, db_lesson, db_articles
 from keyy import secret_key
@@ -31,16 +17,10 @@ app = Flask(__name__,
 app.secret_key = secret_key
 app.config['UPLOAD_FOLDER'] = 'static/uploads/'
 
-
 # app.config['MAX_CONTENT_PATH'] = 16 * 1024 * 1024  # Максимальний розмір файлу - 16 MB
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
 
 
 def allowed_file(filename):
@@ -68,8 +48,7 @@ def registration():
 
     if not db_funcs.table_exists('users'):
         db_funcs.create_user_table()
-    if not db_funcs.table_exists('teacher'):
-        db_teacher.create_teacher_table()
+
     if request.method == 'POST':
         if 'teacher' in request.form:
             return redirect(url_for('teacher_code'))
@@ -81,24 +60,11 @@ def registration():
         phone = request.form['phone']
         password = request.form['password']
 
-        if 'file' not in request.files:
-            return "No photo part"
-        file = request.files['file']
-        if file.filename == '':
-            return "No selected photo"
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file_path = filename
-            file_path_save = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(file_path_save)
+        # Зберігаємо дані користувача у базі даних
+        db_funcs.insert_table(name, surname, midname, email, phone, password)
 
-            # Зберігаємо дані користувача у базі даних
-            user_id = db_funcs.insert_table(name, surname, midname, email, phone, password, file_path)
-
-            session['logged'] = True
-            session['role'] = 'student'
-            # Перенаправляємо користувача на іншу сторінку
-            return redirect(url_for('index'))
+        # Перенаправляємо користувача на іншу сторінку
+        return redirect(url_for('index'))
     return render_template('sign_up.html')
 
 
@@ -142,8 +108,6 @@ def register_teacher():
         phone = request.form['phone']
         password = request.form['password']
         education = request.form['education']
-        level = request.form['level']
-        start_work = request.form['start_work']
         group_count = 0
         indiv_count = 0
         level = request.form['level']
@@ -169,25 +133,6 @@ def register_teacher():
         session['user_id'] = user_id
         return redirect(url_for('index'))
 
-        if 'file' not in request.files:
-            return "No photo part"
-        file = request.files['file']
-        if file.filename == '':
-            return "No selected photo"
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file_path = filename
-            file_path_save = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(file_path_save)
-            file.save(file_path)
-
-            # Зберігаємо дані користувача у базі даних
-            user_id = db_teacher.insert_user_and_teacher(name, surname, midname, email, phone, password, file_path,
-                                    education, 0, 0, level, start_work)
-            session['logged'] = True
-            session['role'] = 'teacher'
-            session['user_id'] = user_id
-            return redirect(url_for('index'))
     return render_template('register_teacher.html')
 
 
@@ -299,119 +244,6 @@ def sign_out():
         return redirect(url_for('index'))
     return render_template('sign_out.html')
 
-@app.route('/profiles/teacher')
-def teacher_profile():
-    user_id = session['user_id']
-    user_teacher_info = db_teacher.get_teacher_info(user_id)
-    return render_template('/profiles/teacher.html', user=user_teacher_info)
-
-@app.route('/profiles/student')
-def student_profile():
-    user_id = session['user_id']
-    user_teacher_info = db_teacher.get_teacher_info(user_id)
-    return render_template('/profiles/student.html', user=user_teacher_info)
-
-
-@app.route('/teachers')
-def show_teachers():
-    teachers = db_teacher.get_all_teachers()
-    return render_template('teachers.html', teachers=teachers)
-
-
-@app.route('/update_teacher_info', methods=['POST'])
-def update_teacher_info():
-    user_id = session.get('user_id')  # Assuming you store the user's ID in the session
-    if not user_id:
-        return redirect(url_for('login'))  # Redirect to login if user not logged in
-
-    name = request.form['name']
-    surname = request.form['surname']
-    midname = request.form['midname']
-    email = request.form['email']
-    phone = request.form['phone']
-
-    photo = request.files['photo']
-    photo_filename = None
-    if photo:
-        print("photo")
-        print(photo)
-        photo_filename = secure_filename(photo.filename)
-        photo.save(os.path.join('static/uploads', photo_filename))
-
-    db_teacher.update_teacher_info(name, surname, midname, email, phone, user_id, photo_filename)
-    return redirect(url_for('teacher_profile'))
-
-
-@app.route('/articles', methods=['GET', 'POST'])
-def articles():
-    if not db_funcs.table_exists('articles'):
-        db_articles.create_articles_table()
-
-    if request.method == 'POST':
-        if 'logged' in session and session['role'] == 'teacher':
-            title = request.form['title']
-            level = request.form['level']
-            content = request.form['content']
-            teacher_id = session['user_id']
-            db_articles.add_article(title, level, content, teacher_id)
-            return redirect(url_for('articles'))
-
-    articles = db_articles.get_all_articles()
-    return render_template('articles.html', articles=articles)
-
-
-# @app.route('/like_article/<int:article_id>', methods=['POST'])
-# def like_article_route(article_id):
-#     if 'logged' in session and session['role'] == 'student':
-#         db_articles.like_article(article_id)
-#     return redirect(url_for('articles'))
-
-
-@app.route('/like_article/<int:article_id>', methods=['POST'])
-def like_article_route(article_id):
-    if 'logged' in session and session['role'] == 'student':
-        db_articles.create_likes_table()
-        user_id = session['user_id']
-        db_articles.like_article(article_id, user_id)
-    return redirect(url_for('articles'))
-
-
-@app.route('/delete_article/<int:article_id>', methods=['POST'])
-def delete_article_route(article_id):
-    if 'logged' in session and session['role'] == 'teacher':
-        teacher_id = session['user_id']  # Assuming user_id is stored in session
-        db_articles.delete_article(article_id, teacher_id)
-    return redirect(url_for('articles'))
-
-
-@app.route('/update_article/<int:article_id>', methods=['GET', 'POST'])
-def update_article_route(article_id):
-    if request.method == 'GET':
-        # Відображення форми оновлення статті з наявними даними
-        article = db_articles.get_article_by_id(article_id)
-        return render_template('update_article.html', article=article)
-    elif request.method == 'POST':
-        # Оновлення статті за допомогою даних з форми
-        title = request.form['title']
-        level = request.form['level']
-        content = request.form['content']
-        db_articles.update_article(article_id, title, level, content)
-        return redirect(url_for('articles'))
-
-
-@app.route('/filtered_articles', methods=['POST'])
-def filtered_articles():
-    selected_levels = []
-    for level in ['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'Всі']:
-        if request.form.get('Всі'):
-            articles = db_articles.get_all_articles()
-            return render_template('articles.html', articles=articles)
-
-        elif request.form.get(f'level_{level.lower()}'):
-            selected_levels.append(level)
-
-    filtered_articles = db_articles.get_articles_by_level(selected_levels)
-    return render_template('articles.html', articles=filtered_articles)
 
 @app.route('/profiles/teacher')
 def teacher_profile():
@@ -758,7 +590,7 @@ def schedule(user_id):
 def inject_is_authenticated():
     if 'logged' in session:
         is_authenticated = True
-    else :
+    else:
         is_authenticated = False
 
     return dict(is_authenticated=is_authenticated)
@@ -775,31 +607,9 @@ class User(UserMixin):
     def is_teacher(self):
         return self.role == 'teacher'
 
-# щоб витягнути з юрл інфу робимо <Type: name>
-@app.route('/user/<string:name>/<int:id>')
-def user(name, id):
-    return 'babe, ur name\'s ' + name + ' ' + str (id)
-
-
-
-
-class User(UserMixin):
-    def __init__(self, id, role):
-        self.id = id
-        self.role = role
-
-    def get_id(self):
-        return self.id
-
-    def is_teacher(self):
-        return self.role == 'teacher'
-
-
-
-if __name__ == '__main__':
-    # with app.app_context():
-    #     db.create_all()
-    app.run(debug = True)
     def is_student(self):
         return self.role == 'student'
 
+
+if __name__ == '__main__':
+    app.run(debug=True)

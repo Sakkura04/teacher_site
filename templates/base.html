@@ -19,16 +19,6 @@
                 </a>
             </div>
             <div class="header-right">
-<!--                <div class="dropdown">-->
-<!--                    <a href="#" class="dropbtn">What's up?</a>-->
-<!--                    <div class="dropdown-content">-->
-<!--                        <a href="/joins">Why us?</a>-->
-<!--                        <a href="/teachers">Our teachers</a>-->
-<!--                        <a href="/lessons">Our courses</a>-->
-<!--                        <a href="/more_bout_learning">About learning</a>-->
-<!--                        <a href="/questions">Your questions</a>-->
-<!--                    </div>-->
-<!--                </div>-->
                 {% if is_authenticated %}
                     {% if session['role'] == 'teacher' %}
                         <a href="/profiles/teacher">Profile </a>
