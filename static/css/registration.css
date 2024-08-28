@@ -4,36 +4,6 @@ body {
     padding: 0;
 }
 
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px;
-}
-
-.header-left h1, a {
-    margin: 0;
-    text-decoration: none; /* Remove underlining */
-    color: black;
-}
-
-.header-right a{
-    margin: 0 15px; /* відступи по 20px зліва і зправа */
-    margin-right: 10px; /* Відступ справа між посиланнями */
-    margin-left: 10px; /* Відступ зліва між посиланнями */
-}
-
-.black-line {
-    width: 97%;
-    height: 2px;
-    background-color: black;
-    margin: 0 15px; /* відступи по 20px зліва і зправа */
-}
-
-main {
-    padding: 20px;
-}
-
 .main-image {
     width: 100%;
     margin-bottom: 0px;
@@ -171,12 +141,32 @@ footer {
 }
 
 
-.input-field {
+.password-container {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.input-field, .input-field-select {
+    padding-right: 40px;
     width: 80%; /* Ширина поля */
     border-radius: 10px; /* Закруглені вугли поля */
     padding: 10px; /* Відступ від країв поля */
     margin-bottom: 20px;
     margin-top 20px;
+}
+
+.input-field-select {
+     width: 85%; /* Задайте ширину для певних елементів */
+}
+
+.toggle-icon img{
+    position: absolute;
+    width: 8%;
+    top: 50%;
+    right: 10%;
+    transform: translateY(-75%);
+    cursor: pointer;
 }
 
 

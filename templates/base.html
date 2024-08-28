@@ -9,49 +9,56 @@
     <title>BIRD SCHOOL</title>
 </head>
 <body>
+    <script src="static/js/main.js"></script>
+
     <header>
-        <div class="header-left">
-            <a href="/">
-                <h1>B I R D     S C H O O L</h1>
-            </a>
-        </div>
-        <div class="header-right">
-            <div class="dropdown">
-                <a href="#" class="dropbtn">What's up?</a>
-                <div class="dropdown-content">
-                    <a href="/joins">Why us?</a>
-                    <a href="/teachers">Our teachers</a>
-                    <a href="/lessons">Our courses</a>
-                    <a href="/questions">Your questions</a>
-                </div>
+        <div class="top-line-content">
+            <div class="header-left">
+                <a href="/">
+                    <h1 style="font-family: 'VogueFont', Arial, sans-serif;">B I R D     S C H O O L</h1>
+                </a>
             </div>
-
-            <a href="/articles">Articles  </a>
-            {% if is_authenticated %}
-                {% if session['role'] == 'teacher' %}
-                    <a href="/profiles/teacher">Profile </a>
-                {% elif session['role'] == 'student'%}
-                    <a href="/profiles/student">Profiles </a>
-                {% endif %}
-                <a href="/sign_out">Log out </a>
-            {% else %}
-                <a href="/sign_up">Sign up </a>
-                    <a href="/profiles/student">Profile </a>
-                {% endif %}
-                <a href="/sign_out">Log out </a>
-            {% else %}
-                <div class="dropdown">
-                    <a href="#" class="dropbtn">Sign up!</a>
-                    <div class="dropdown-content">
-                        <a href="/teacher_code">As a teacher </a>
-                        <a href="/register_student">As a student </a>
+            <div class="header-right">
+<!--                <div class="dropdown">-->
+<!--                    <a href="#" class="dropbtn">What's up?</a>-->
+<!--                    <div class="dropdown-content">-->
+<!--                        <a href="/joins">Why us?</a>-->
+<!--                        <a href="/teachers">Our teachers</a>-->
+<!--                        <a href="/lessons">Our courses</a>-->
+<!--                        <a href="/more_bout_learning">About learning</a>-->
+<!--                        <a href="/questions">Your questions</a>-->
+<!--                    </div>-->
+<!--                </div>-->
+                {% if is_authenticated %}
+                    {% if session['role'] == 'teacher' %}
+                        <a href="/profiles/teacher">Profile </a>
+                    {% elif session['role'] == 'student'%}
+                        <a href="/profiles/student">Profile </a>
+                    {% endif %}
+                    <a href="/sign_out">Log out </a>
+                {% else %}
+                    <div class="dropdown">
+                        <a href="#" class="dropbtn">Sign up</a>
+                        <div class="dropdown-content">
+                            <a href="/teacher_code">As a teacher </a>
+                            <a href="/register_student">As a student </a>
+                        </div>
                     </div>
-                </div>
-            {% endif %}
+                    <div class="dropdown">
+                        <a href="/log_in" class="dropbtn">Log in</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
 
+        <div class="line-content">
+                <a href="/joins">Why us?</a>
+                <a href="/teachers">Our teachers</a>
+                <a href="/lessons">Our courses</a>
+                <a href="/articles">Useful articles</a>
+                <a href="/questions">Your questions</a>
         </div>
     </header>
-    <div class="black-line"></div>
 
     {% block main %}{%endblock%}
 

@@ -143,20 +143,20 @@ def get_students_by_lesson(less_id):
     return students
 
 
-def get_students_by_teacher(teach_id):
+def get_students_by_teacher(user_id):
     connection = db_funcs.get_db_connection()
     students = []
     try:
         cursor = connection.cursor(dictionary=True)
         query = """
-            SELECT u.id, u.name, u.surname, u.level, u.photo, s.grade, l.less_id, l.less_name
+            SELECT u.id, u.name, u.surname, u.photo, s.grade, s.level, l.less_id, l.less_name
             FROM users u
             INNER JOIN student s ON u.id = s.user_id
             INNER JOIN lesson l ON s.lesson_id = l.less_id
             INNER JOIN teacher t ON l.teacher_id = t.teach_id
-            WHERE t.teach_id = %s
+            WHERE t.user_id = %s
          """
-        cursor.execute(query, (teach_id,))
+        cursor.execute(query, (user_id,))
         students = cursor.fetchall()
     except mysql.connector.Error as error:
         print("Error fetching students:", error)
@@ -187,6 +187,7 @@ def update_student_info(name, surname, midname, email, level, start_educ, phone,
                 WHERE id = %s
             """
             cursor.execute(query, (name, surname, midname, email, phone, user_id))
+        connection.commit()
         query = """
             UPDATE student
             SET level = %s, start_educ = %s

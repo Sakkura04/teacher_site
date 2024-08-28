@@ -19,15 +19,8 @@
                   <input required type="text"  name="midname" id="user_midname" placeholder="По батькові" class="input-field">
                   <input required type="email" name="email" id="user_email" placeholder="Email" class="input-field" value="">
                   <input required type="tel"   name="phone" id="user_phone" placeholder="Номер телефону" class="input-field">
-                  <select required name="level" id="level" class="input-field">
+                  <select required name="level" id="level" class="input-field-select">
                       <option value="">Рівень знання англ. мови</option>
-                      <option value="A0">A0</option>
-                      <option value="A1">A1</option>
-                      <option value="A1+">A1+</option>
-                      <option value="A2">A2</option>
-                      <option value="A2+">A2+</option>
-                      <option value="B1">B1</option>
-                      <option value="B1+">B1+</option>
                       <option value="B2">B2</option>
                       <option value="C1">C1</option>
                       <option value="C2">C2</option>
@@ -35,7 +28,12 @@
                   <input required type="text" name="education" id="teacher_education" placeholder="Освіта" class="input-field">
                   <input required type="date" name="start_work" id="start_work" placeholder="Початок роботи" class="input-field">
                   <input type="file" name="file" id="user_file"  placeholder="Фотографія" class="input-field">
-                  <input required type="password" name="password" id="user_password" placeholder="Пароль" class="input-field">
+                  <div class="password-container">
+                      <input required type="password" name="password" id="user_password" placeholder="Пароль" class="input-field">
+                      <span id="togglePassword" class="toggle-icon">
+                          <img id="eyeIcon" src="static/eye.png" alt="Show">
+                      </span>
+                  </div>
                   <input type="submit" name="commit" value="Register" class="btn" data-disable-with="Sign up">
                 </form>
           </div>
@@ -43,5 +41,25 @@
         </div>
     </div>
 </div>
+
+<script>
+    const passwordField = document.getElementById("user_password");
+    const togglePassword = document.getElementById("togglePassword");
+    const eyeIcon = document.getElementById("eyeIcon");
+
+    togglePassword.addEventListener("click", function () {
+        const type = passwordField.getAttribute("type") === "password" ? "text" : "password";
+        passwordField.setAttribute("type", type);
+
+        if (type === "text") {
+            eyeIcon.src = "static/eye.png"; // Іконка для приховування пароля
+            eyeIcon.alt = "Hide";
+        } else {
+            eyeIcon.src = "static/closed-eye.png"; // Іконка для перегляду пароля
+            eyeIcon.alt = "Show";
+        }
+    });
+</script>
+
 {%endblock%}
 
